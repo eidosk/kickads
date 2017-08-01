@@ -1,0 +1,51 @@
+var KA = KA || {};
+var HIT_AREA_ALPHA = 0;
+//var START_STATE = "WellDone";
+var START_STATE = "Level";
+//BOOL
+var DEBUG_MODE = false;
+//PIXELS
+var GAME_WIDTH = 240; //320;
+var GAME_HEIGHT = 135; //180; 
+var WORLD_WIDTH = 1280; //1280 * 360
+var WORLD_HEIGHT = 360;
+var TILE_WIDTH = 12;
+var FLOOR_Y = WORLD_HEIGHT - 12;
+//COORDS
+var PLAYER_START_X = GAME_WIDTH *.5;
+var PLAYER_START_Y = 30;
+var PLATFORM_X = 180;
+var MC_X = 110;
+//PHYSICS
+var ATTACK_SPEED = 120;
+var RUN_SPEED = 100;
+var JUMP_SPEED = 150;
+var SPEED_X = .3;
+var GRAVITY = 400;
+//OTHER
+var SCALE = 4;
+var EDGE_PADDING = 80;
+var EDGE_LEFT = EDGE_PADDING;
+var EDGE_RIGHT = GAME_WIDTH - EDGE_PADDING;
+var CHAR_IDX = 1;
+var MAX_RUN_COUNTER = 104;
+var MAX_JUMP_DOWN_COUNTER = 4;
+//var TINT_SODA = 0xe73131;
+var TINT_SODA = 0xEE9E94;
+//var TINT_FOOD = 0x688f48;
+var TINT_FOOD = 0x94CC68;
+//var TINT_TECH = 0x3cfffc;
+var TINT_TECH = 0xA1F1FF;
+var TINT_CIGARETTES = 0xfcc1d;
+//BRANDS
+var BRAND_SODA = "soda";
+var BRAND_FOOD = "food";
+var BRAND_TECH = "tech";
+var BRAND = {
+    SODA:"soda",
+    FOOD:"soda",
+    TECH:"soda",
+    CIGARETTES:"cigarettes",
+}
+var BRAND_CIGARETTES = "cigarettes";
+var BRANDS = [BRAND_SODA, BRAND_FOOD, BRAND_TECH, BRAND_CIGARETTES];
