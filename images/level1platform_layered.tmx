@@ -12,7 +12,7 @@
  <tileset firstgid="241" name="billboard_scaffold" tilewidth="12" tileheight="12" tilecount="32" columns="8">
   <image source="billboard_scaffold.png" trans="22ff29" width="96" height="58"/>
  </tileset>
- <imagelayer name="Background">
+ <imagelayer name="Background" visible="0">
   <image source="bg.png" width="1280" height="360"/>
  </imagelayer>
  <layer name="platformLayer" width="108" height="30">
