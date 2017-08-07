@@ -42,6 +42,9 @@ function preload(){
     //OTHER
     game.load.image("bullet", "images/bullet.png");
     game.load.image("pixel", "images/pixel.png");
+    game.load.image("speech_bubble", "images/speech_bubble.png");
+    //FONT
+    game.load.bitmapFont('myfont', 'fonts/font.png', 'fonts/font.fnt');
 }
 var mapGround;
 var mapPlatform;
@@ -100,6 +103,7 @@ function create(){
     KA.player = player;
     game.physics.enable(platformLayer, Phaser.Physics.ARCADE);
     game.time.advancedTiming = true;
+    KA.player.speak();
     //game.time.events.add(3000, wellDone, this);
 }
 function update(){
@@ -134,6 +138,8 @@ function processAdCollide(playerSprite, adTile){
 function wellDone(){
      game.state.start("WellDone");
 }
+
+
 //KA.Level.prototype.handleCollisions = function(game){
 function handleCollisions(game){
     game.physics.arcade.collide(player, groundLayer);

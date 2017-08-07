@@ -4,12 +4,12 @@ KA.EnemyManager = function(tMap, info){
     this.map = tMap;
     this.info = info;
     this.enemies = [];
-    trace("There are " + this.info.tilesets.length + " types of ads");
+    //trace("There are " + this.info.tilesets.length + " types of ads");
     for(i = 0; i < this.info.tilesets.length; i++){
         var tSet = this.info.tilesets[i];
         var firstTileArr = this.getEnemyFirstTileArray(tSet.firstgid);
         var count = firstTileArr.length;
-        trace("Ad " + i + " is called " + tSet.name + ", it has ID: " + tSet.firstgid + " and there are " + count + " ads of this type on screen");
+        //trace("Ad " + i + " is called " + tSet.name + ", it has ID: " + tSet.firstgid + " and there are " + count + " ads of this type on screen");
         this.map.addTilesetImage(tSet.name, tSet.name);
         for(j = 0; j<count; j++){
             var firstTile = firstTileArr[j];
@@ -26,7 +26,7 @@ KA.EnemyManager = function(tMap, info){
             //copy(x, y, width, height, layer) → {array}
         }
     }
-    trace("tot enemies: " + this.enemies.length);
+    //trace("tot enemies: " + this.enemies.length);
 }
 KA.EnemyManager.constructor = KA.EnemyManager;
 
