@@ -10,8 +10,8 @@ var text;
 var game;
 var bpmText;
 function create(){
-    bmpText = game.add.bitmapText(10, 10, 'myfont','Well Doneaaa!', 16);
-    game.time.events.add(1000, aaaaaa, this);
+    bmpText = game.add.bitmapText(10, 10, 'myfont','Well Done!', 16);
+    game.time.events.add(1000, pressAnyKey, this);
 }
 
 function update(){}

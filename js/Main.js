@@ -34,7 +34,7 @@ function round(value){
     return Phaser.Math.roundAwayFromZero(value);
 }
 
-function aaaaaa(){
+function pressAnyKey(){
     bmpText = game.add.bitmapText(10, 26, 'myfont','Press any key', 16);
     game.input.keyboard.onDownCallback = function(){
         game.state.start("Level");
