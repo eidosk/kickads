@@ -43,6 +43,9 @@ function preload(){
     game.load.image("bullet", "images/bullet.png");
     game.load.image("pixel", "images/pixel.png");
     game.load.image("speech_bubble", "images/speech_bubble.png");
+    game.load.image("speech_corner", "images/speech_corner.png");
+    game.load.image("speech_arrow", "images/speech_arrow.png");
+    game.load.image("speech_body", "images/speech_body.png");
     //FONT
     game.load.bitmapFont('myfont', 'fonts/font.png', 'fonts/font.fnt');
 }
@@ -103,7 +106,7 @@ function create(){
     KA.player = player;
     game.physics.enable(platformLayer, Phaser.Physics.ARCADE);
     game.time.advancedTiming = true;
-    KA.player.speak();
+    KA.player.speak("Badadaba doo");
     //game.time.events.add(3000, wellDone, this);
 }
 function update(){

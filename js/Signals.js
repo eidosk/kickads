@@ -1,5 +1,5 @@
 var KA = KA || {};
-var Signals = {  //static class
+var Signals = {
     kick: new Phaser.Signal(),
     removeTile: new Phaser.Signal()
 };
