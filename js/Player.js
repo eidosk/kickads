@@ -24,7 +24,6 @@ var state;
 KA.Player = function(game, name){
     Phaser.Sprite.call(this, game, 32, 300, name);
     game.add.existing(this);
-    //trace("wtf" + this);
     this.anchor.setTo(0.5, 0);
     game.physics.enable(this, Phaser.Physics.ARCADE);
     this.addAnimations();

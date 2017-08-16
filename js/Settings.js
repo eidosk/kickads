@@ -1,6 +1,5 @@
 var KA = KA || {};
 var HIT_AREA_ALPHA = 0;
-//var START_STATE = "WellDone";
 var START_STATE = "Level";
 //BOOL
 var DEBUG_MODE = false;

@@ -67,7 +67,7 @@ KA.Emitter.prototype.emit = function(){
     var charArr = KA.NPCManager.characters; //npcs
     for(i=0; i<charArr.length; i++){
         var char = charArr[i];
-        trace("char.isZombie(): " + char.isZombie());
+        //trace("char.isZombie(): " + char.isZombie());
         if(!char.isZombie())this.checkTarget(char.body.world.x + char.scale.x * 10, char.body.world.y);
     }
 }

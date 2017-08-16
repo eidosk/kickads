@@ -51,9 +51,37 @@ KA.NPC.prototype.isZombie = function(){
 KA.NPC.prototype.onKick = function(player) {
     if(Math.abs(player.x - this.x) < 20 && Math.abs(player.y - this.y)<15){
         trace("KICK THIS GUY!")
+        player.speak(this.getRandomSentence());
+        this.speak(this.getRandomSentenceNPC());
         this.flipX();
     }
 }
+
+KA.NPC.prototype.getRandomSentence = function(){
+    var arr = [];
+    arr.push("Take This!");
+    arr.push("In your face!");
+    arr.push("That will teach you!");
+    arr.push("Give me your bubblegums!");
+    arr.push("Wrong way!");
+    arr.push("Where are you going?");
+    arr.push("Who are you?");
+    arr.push("I don't like you.");
+    arr.push("I am kicking your ass");
+    arr.push("Silly person!");
+    return arr[Math.floor(Math.random()*arr.length)]
+}
+
+KA.NPC.prototype.getRandomSentenceNPC = function(){
+    var arr = [];
+    arr.push("Ouch!");
+    arr.push("Hey!");
+    arr.push("You are killing me!");
+    arr.push("That hurts!");
+    return arr[Math.floor(Math.random()*arr.length)]
+}
+
+
 KA.NPC.prototype.assignAnimations = function() {
     switch(this.name){
         case "girl":

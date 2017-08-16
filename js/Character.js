@@ -5,6 +5,7 @@ KA.Character = function(game, name){
     game.add.existing(this);
     this.state = "";
     this.speechBubble = null;
+    this.timerEvent = null;
 }
 KA.Character.prototype = Object.create(Phaser.Sprite.prototype); 
 KA.Character.prototype.constructor = KA.Character;
@@ -39,6 +40,7 @@ KA.Character.prototype.isFacing = function(left = true){
         return this.scale.x == 1;
     }
 }
+
 KA.Character.prototype.flipX = function(){
     this.scale.setTo(this.scale.x * -1, 1);
     if(this.speechBubble!=null)this.speechBubble.flipText();
@@ -49,7 +51,20 @@ KA.Character.prototype.isOffScreen = function(){
 }
 
 
-KA.Character.prototype.speak = function(msg){
-    this.speechBubble = new KA.SpeechBubble(this.game, "I came here to kick ads!", this);
+KA.Character.prototype.speak = function(msg, delay){
+    if(this.timerEvent){
+        this.game.time.events.remove(this.timerEvent);
+        this.timerEvent = null;
+    }
+    this.removeSpeechBubble();
+    this.speechBubble = new KA.SpeechBubble(this.game, msg, this);
     this.addChild(this.speechBubble);
+    this.timerEvent = this.game.time.events.add(Phaser.Timer.SECOND * 3, this.removeSpeechBubble, this);
+}
+
+KA.Character.prototype.removeSpeechBubble = function(){
+    if(this.speechBubble!=null){
+        this.removeChild(this.speechBubble);
+        this.speechBubble = null;
+    }
 }

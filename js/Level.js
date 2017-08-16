@@ -42,7 +42,6 @@ function preload(){
     //OTHER
     game.load.image("bullet", "images/bullet.png");
     game.load.image("pixel", "images/pixel.png");
-    game.load.image("speech_bubble", "images/speech_bubble.png");
     game.load.image("speech_corner", "images/speech_corner.png");
     game.load.image("speech_arrow", "images/speech_arrow.png");
     game.load.image("speech_body", "images/speech_body.png");
@@ -102,12 +101,10 @@ function create(){
     game.physics.arcade.gravity.y = GRAVITY;
     KA.NPCManager.addNPCs(game);
     player = new KA.Player(this.game, 'dude');
-    KA.game.global.player = player;
     KA.player = player;
     game.physics.enable(platformLayer, Phaser.Physics.ARCADE);
     game.time.advancedTiming = true;
     KA.player.speak("Badadaba doo");
-    //game.time.events.add(3000, wellDone, this);
 }
 function update(){
     //bgFar.x+=.01;
