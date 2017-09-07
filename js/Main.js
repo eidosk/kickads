@@ -1,10 +1,10 @@
 var KA = KA || {};
 window.onload = function(){
     KA.game = new Phaser.Game(GAME_WIDTH, GAME_HEIGHT, Phaser.CANVAS, 'game');
-    KA.game.global = {
+    /*KA.game.global = {
         score : 0,
         sound : false
-    }
+    }*/
     KA.game.state.add("Level", KA.Level);
     KA.game.state.add("WellDone", KA.WellDone);
     KA.game.state.add("GameOver", KA.GameOver);

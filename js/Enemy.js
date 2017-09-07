@@ -1,4 +1,6 @@
 var KA = KA || {};
+
+//Object with info about the tiles
 KA.Enemy = function(tManager, tInfo, tTiles){
     this.manager = tManager;
     this.info = tInfo;
@@ -25,6 +27,7 @@ KA.Enemy.prototype.onRemoveTile = function(tile){
     var match = -1;
     for(i=0; i < this.tiles.length; i++){
         var tTile = this.tiles[i];
+        if (tTile == null) break;
         if(this.doTilesMatch(tile, tTile)){
             match = i;
             break;

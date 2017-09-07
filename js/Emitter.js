@@ -9,7 +9,7 @@ KA.Emitter = function(game, x, y, health, name){
     this.diameter = 200;
     this.center = new Phaser.Circle(x, y, 4);
     this.emitTimer = game.time.create(false);
-    this.emitTimer.loop(2000, this.emit, this);
+    this.emitTimer.loop(6000, this.emit, this);
     this.emitTimer.start();
     this.updateHealth(health);
 }
@@ -21,6 +21,7 @@ KA.Emitter.prototype.update = function(){
 
 KA.Emitter.prototype.getBrandId = function(name){
     var brandId = -1;
+    /*
     switch(name){
            case "street_cola":
            case "billboard_cola":
@@ -37,7 +38,12 @@ KA.Emitter.prototype.getBrandId = function(name){
                 brandId = 2;
            break;
     }
-    return brandId;
+    */
+    
+    //return brandId;
+    
+    
+    return 0; //temp for test
 }
 
 KA.Emitter.prototype.updateHealth = function(health){

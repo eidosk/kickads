@@ -1,5 +1,10 @@
 var KA = KA || {};
+
+//ALPHA
 var HIT_AREA_ALPHA = 0;
+var BULLET_ALPHA = 0;
+
+
 var START_STATE = "Level";
 //BOOL
 var DEBUG_MODE = false;
@@ -29,6 +34,7 @@ var EDGE_RIGHT = GAME_WIDTH - EDGE_PADDING;
 var CHAR_IDX = 1;
 var MAX_RUN_COUNTER = 104;
 var MAX_JUMP_DOWN_COUNTER = 4;
+
 //var TINT_SODA = 0xe73131;
 var TINT_SODA = 0xEE9E94;
 //var TINT_FOOD = 0x688f48;

@@ -19,6 +19,7 @@ function preload(){
     game.load.image('groundTile', 'images/groundTile.png');
     game.load.image('platformTile', 'images/platformTile.png');
     //ADS
+    /*
     game.load.image('bus_burger', 'images/enemies/bus_burger.png');
     game.load.image('street_cola', 'images/enemies/street_cola.png');
     game.load.image('billboard_burger', 'images/enemies/billboard_burger.png');
@@ -28,6 +29,17 @@ function preload(){
     game.load.image('bill_phone_mid', 'images/enemies/bill_phone_mid.png');
     game.load.image('banner_cola_vert_mid', 'images/enemies/banner_cola_vert_mid.png');
     game.load.image('banner_cola_line', 'images/enemies/banner_cola_line.png');
+    
+     game.load.spritesheet('billboard', 'images/enemies/billboard.png', 120, 60, 6);
+    game.load.spritesheet('banner', 'images/enemies/banner.png', 600, 60, 6);
+    game.load.spritesheet('square', 'images/enemies/square.png', 180, 36, 6);
+    */
+    
+    game.load.image('billboard_temp', 'images/enemies/billboard_temp.png');
+    game.load.image('banner_temp', 'images/enemies/banner_temp.png');
+    game.load.image('square_temp', 'images/enemies/square_temp.png');
+   
+    
     //CHARACTERS
     game.load.spritesheet('dude', 'images/hero_sprites.png', 22, 22, 90);
     game.load.image('girl', 'images/npcs/girl.png');
@@ -45,6 +57,9 @@ function preload(){
     game.load.image("speech_corner", "images/speech_corner.png");
     game.load.image("speech_arrow", "images/speech_arrow.png");
     game.load.image("speech_body", "images/speech_body.png");
+    game.load.image("button_x", "images/button_x.png");
+    game.load.spritesheet("influence_bubbles", "images/influence_bubbles.png",11,13, 4);
+    game.load.spritesheet("bubbles", "images/bubbles.png", 12, 13, 47);
     //FONT
     game.load.bitmapFont('myfont', 'fonts/font.png', 'fonts/font.fnt');
 }
@@ -95,6 +110,7 @@ function create(){
     platformLayer.alpha = HIT_AREA_ALPHA;
     mapAds = game.add.tilemap("mapAds");
     enemyManager = new KA.EnemyManager(mapAds,game.cache.getJSON('adsInfo'));
+    enemyManager.test();
     adLayer = mapAds.createLayer('adLayer');
     mapAds.setCollision([1,2]);
     totAdTiles = enemyManager.countTiles();
@@ -104,8 +120,8 @@ function create(){
     KA.player = player;
     game.physics.enable(platformLayer, Phaser.Physics.ARCADE);
     game.time.advancedTiming = true;
-    KA.player.speak("Badadaba doo");
 }
+
 function update(){
     //bgFar.x+=.01;
     bgFar.x= game.camera.x*0.03;

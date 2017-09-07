@@ -19,7 +19,7 @@ var cursors;
 var jumpButton;
 var actionButton;
 var splatButton;
-var debugButton;
+var infoButton;
 var state;
 KA.Player = function(game, name){
     Phaser.Sprite.call(this, game, 32, 300, name);
@@ -37,7 +37,7 @@ KA.Player = function(game, name){
     jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.Z);
     actionButton = game.input.keyboard.addKey(Phaser.Keyboard.X);
     splatButton = game.input.keyboard.addKey(Phaser.Keyboard.S);
-    debugButton = game.input.keyboard.addKey(Phaser.Keyboard.D);
+    infoButton = game.input.keyboard.addKey(Phaser.Keyboard.I);
     game.input.keyboard.onDownCallback = function(){
         if(game.input.keyboard.event.keyCode==68){
             DEBUG_MODE = !DEBUG_MODE;
@@ -135,20 +135,9 @@ KA.Player.prototype.jumpDown = function(){
     jumpingDown = true;
     this.playAnim(JUMP);
 }
-KA.Player.prototype.kick = function(){
-    Signals.kick.dispatch(this);
-    if(state==JUMP){
-        this.playAnim(KICK_AIR);
-        kickAirAnim.onComplete.add(this.onKickAnimComplete, this);
-    }else{
-        this.playAnim(KICK);
-        kickAnim.onComplete.add(this.onKickAnimComplete, this);
-    }
-    this.body.velocity.x = ATTACK_SPEED * this.scale.x;
-}
+
 
 KA.Player.prototype.tempTint = function(tint){
-    trace("original tint: " + this.tint);
     this.tint = tint;
     game.time.events.add(2000, this.restoreTint, this);
 }
@@ -158,6 +147,7 @@ KA.Player.prototype.restoreTint = function(){
 }
 
 KA.Player.prototype.update = function(){
+    //trace("x: " + this.x);
     if(state==SPLAT || state==LAND_HARD)return; //must wait for end of land hard or splate animations
     if(jumpingDown){
         jumpDownCounter++;
@@ -201,7 +191,7 @@ KA.Player.prototype.update = function(){
         }
     }
     if(isOnFloor){
-        if(state==JUMP){
+        if(state==JUMP){ 
             this.land();
         }else if (jumpButton.isDown && state==CROUCH && !this.isOnTheFloor()){ //JUMP DOWN
             this.jumpDown();
@@ -216,20 +206,50 @@ KA.Player.prototype.update = function(){
         if(splatButton.isDown && DEBUG_MODE && (state==STAND || state==STOP)){
             this.splat();
         }
+        if(infoButton.isDown){
+            trace("x: " + this.x);
+        }
     }else{
         if(this.isRunning()){
             this.playAnim(JUMP);
         }
     }
     if(actionButton.isDown && !this.isKicking()){
-        trace("KICK!!!");
-        this.kick();
+        //this.kick();
+        this.doAction();
+        
     }else if (actionButton.isUp && this.isKicking()){
         if(state==JUMP)this.playAnim(JUMP);
         else if (this.isRunning()) this.run();
-        //else this.playAnim(STAND);
     }
     if(kickAirAnim.isPlaying && state==JUMP){
        this.body.velocity.x = ATTACK_SPEED * this.scale.x;
     }
 }
+
+KA.Player.prototype.doAction = function(){
+    Signals.doAction.dispatch(this);
+    if(this.canKick())this.kick();
+}
+
+KA.Player.prototype.canKick = function(){
+    if(KA.NPCManager.isPlayerNear())return false;
+    else return true;
+}
+
+
+
+
+
+KA.Player.prototype.kick = function(){
+    Signals.kick.dispatch(this);
+    if(state==JUMP){
+        this.playAnim(KICK_AIR);
+        kickAirAnim.onComplete.add(this.onKickAnimComplete, this);
+    }else{
+        this.playAnim(KICK);
+        kickAnim.onComplete.add(this.onKickAnimComplete, this);
+    }
+    this.body.velocity.x = ATTACK_SPEED * this.scale.x;
+}
+

@@ -1,15 +1,14 @@
 var KA = KA || {};
-
 KA.Character = function(game, name){
     Phaser.Sprite.call(this, game, 0, 0, name);
     game.add.existing(this);
     this.state = "";
     this.speechBubble = null;
+    this.popUp = null; // pop up is a text message on the character (ex: press x to interact)
     this.timerEvent = null;
 }
 KA.Character.prototype = Object.create(Phaser.Sprite.prototype); 
 KA.Character.prototype.constructor = KA.Character;
-
 
 KA.Character.prototype.playAnim = function(name){
     trace("!!!playAnim!!!");
@@ -50,16 +49,32 @@ KA.Character.prototype.isOffScreen = function(){
     return this.x < 0 || this.x > WORLD_WIDTH;
 }
 
-
-KA.Character.prototype.speak = function(msg, delay){
+KA.Character.prototype.speak = function(msg, y, willDisappear){
+    if (typeof(willDisappear)==='undefined') willDisappear = true;
     if(this.timerEvent){
         this.game.time.events.remove(this.timerEvent);
         this.timerEvent = null;
     }
     this.removeSpeechBubble();
-    this.speechBubble = new KA.SpeechBubble(this.game, msg, this);
+    this.speechBubble = new KA.SpeechBubble(this.game, msg, this, y);
     this.addChild(this.speechBubble);
-    this.timerEvent = this.game.time.events.add(Phaser.Timer.SECOND * 3, this.removeSpeechBubble, this);
+    if(willDisappear == true)this.timerEvent = this.game.time.events.add(3000, this.removeSpeechBubble, this); 
+}
+
+KA.Character.prototype.showPopUp = function(){
+    if(!this.isSpeaking()){
+        this.speak("...", -16, false);
+        this.popUp = true;
+    }
+}
+
+KA.Character.prototype.isSpeaking = function(){
+    return (this.speechBubble!=null);
+}
+
+KA.Character.prototype.removePopUp = function(){
+    this.removeSpeechBubble();
+    this.popUp = null;
 }
 
 KA.Character.prototype.removeSpeechBubble = function(){

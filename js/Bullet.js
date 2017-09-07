@@ -6,7 +6,7 @@ KA.Bullet = function(game, brandId, sx, sy,fx,fy, radius){
     this.fy = fy;
     this.sx = sx;
     this.sy = sy;
-    //this.alpha = 0;
+    this.alpha = BULLET_ALPHA;
     this.radius = radius;
     var angle = game.math.angleBetweenY(sx, sy, this.fx, this.fy);
     this.vx = Math.sin(angle) * radius *.02;
@@ -30,7 +30,7 @@ KA.Bullet.prototype.update = function(){
 KA.Bullet.prototype.checkCollision = function(){
     //PLAYER
     if(KA.Collision.hitTestPoint(KA.player.body, this.x, this.y)){ 
-        KA.player.tempTint(this.tint);
+        //KA.player.tempTint(this.tint);
         this.doDestroy();
     }
     //NPCs
