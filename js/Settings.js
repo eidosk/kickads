@@ -4,7 +4,6 @@ var KA = KA || {};
 var HIT_AREA_ALPHA = 0;
 var BULLET_ALPHA = 0;
 
-
 var START_STATE = "Level";
 //BOOL
 var DEBUG_MODE = false;
@@ -26,14 +25,19 @@ var RUN_SPEED = 100;
 var JUMP_SPEED = 150;
 var SPEED_X = .3;
 var GRAVITY = 400;
+var NPC_SPEED_PERC = .8;
 //OTHER
 var SCALE = 4;
+var TOT_DAY_PARTS = 4;
+var DAY_PART_DURATION = 10000; //ms
 var EDGE_PADDING = 80;
 var EDGE_LEFT = EDGE_PADDING;
 var EDGE_RIGHT = GAME_WIDTH - EDGE_PADDING;
 var CHAR_IDX = 1;
 var MAX_RUN_COUNTER = 104;
 var MAX_JUMP_DOWN_COUNTER = 4;
+var NPC_STATE_IDLE = "idle";
+var NPC_STATE_WORKING = "working";
 
 //var TINT_SODA = 0xe73131;
 var TINT_SODA = 0xEE9E94;
@@ -52,5 +56,23 @@ var BRAND = {
     TECH:"soda",
     CIGARETTES:"cigarettes",
 }
+var GO_TO_WORK = 0;
+var GO_TO_SHOP = 1;
+var GO_HOME = 2;
+
+var TEMP_CHAR_1_START_X = 130;
+//var TEMP_CHAR_1_START_X = 440;
+var TEMP_CHAR_2_START_X = 1149;
+//var TEMP_CHAR_2_START_X = 500;
+
+
+var WORK_X = 485;
+var SHOP_X = 754;
+
+var PART_MORNING_COMMUTE = 0;
+var PART_WORKING = 1;
+var PART_EVENING_COMMUTE = 2;
+var PART_NIGHT = 3;
+
 var BRAND_CIGARETTES = "cigarettes";
 var BRANDS = [BRAND_SODA, BRAND_FOOD, BRAND_TECH, BRAND_CIGARETTES];

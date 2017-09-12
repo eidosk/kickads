@@ -19,27 +19,9 @@ function preload(){
     game.load.image('groundTile', 'images/groundTile.png');
     game.load.image('platformTile', 'images/platformTile.png');
     //ADS
-    /*
-    game.load.image('bus_burger', 'images/enemies/bus_burger.png');
-    game.load.image('street_cola', 'images/enemies/street_cola.png');
-    game.load.image('billboard_burger', 'images/enemies/billboard_burger.png');
-    game.load.image('billboard_cola', 'images/enemies/billboard_cola.png');
-    game.load.image('banner_green_tall', 'images/enemies/banner_green_tall.png');
-    game.load.image('bill_phone_big', 'images/enemies/bill_phone_big.png');
-    game.load.image('bill_phone_mid', 'images/enemies/bill_phone_mid.png');
-    game.load.image('banner_cola_vert_mid', 'images/enemies/banner_cola_vert_mid.png');
-    game.load.image('banner_cola_line', 'images/enemies/banner_cola_line.png');
-    
-     game.load.spritesheet('billboard', 'images/enemies/billboard.png', 120, 60, 6);
-    game.load.spritesheet('banner', 'images/enemies/banner.png', 600, 60, 6);
-    game.load.spritesheet('square', 'images/enemies/square.png', 180, 36, 6);
-    */
-    
     game.load.image('billboard_temp', 'images/enemies/billboard_temp.png');
     game.load.image('banner_temp', 'images/enemies/banner_temp.png');
     game.load.image('square_temp', 'images/enemies/square_temp.png');
-   
-    
     //CHARACTERS
     game.load.spritesheet('dude', 'images/hero_sprites.png', 22, 22, 90);
     game.load.image('girl', 'images/npcs/girl.png');
@@ -58,6 +40,14 @@ function preload(){
     game.load.image("speech_arrow", "images/speech_arrow.png");
     game.load.image("speech_body", "images/speech_body.png");
     game.load.image("button_x", "images/button_x.png");
+    game.load.image("sky_cycle_0", "images/sky_cycle_0.png");
+    game.load.image("sky_cycle_0b", "images/sky_cycle_0b.png");
+    game.load.image("sky_cycle_1", "images/sky_cycle_1.png");
+    game.load.image("sky_cycle_1b", "images/sky_cycle_1b.png");
+    game.load.image("sky_cycle_2", "images/sky_cycle_2.png");
+    game.load.image("sky_cycle_2b", "images/sky_cycle_2b.png");
+    game.load.image("sky_cycle_3", "images/sky_cycle_3.png");
+    game.load.image("sky_cycle_3b", "images/sky_cycle_3b.png");
     game.load.spritesheet("influence_bubbles", "images/influence_bubbles.png",11,13, 4);
     game.load.spritesheet("bubbles", "images/bubbles.png", 12, 13, 47);
     //FONT
@@ -78,6 +68,7 @@ var player;
 var facing = 'left';
 var bg;
 var bgFar;
+var bgSky;
 var deltaY = 5;
 var prevY = 0;
 var totAdTiles;
@@ -85,7 +76,9 @@ var game;
 
 function create(){
     game.physics.startSystem(Phaser.Physics.ARCADE); //enable arcade physics
+    bgSky = game.add.sprite(0, 0,'sky_cycle_1');
     bgFar = game.add.sprite(0, 0,'bg_far');
+    bgFar.alpha = .7;
     bg = game.add.sprite(0, 0,'background');
     //bg = game.add.tileSprite(0, 0, WORLD_WIDTH, WORLD_HEIGHT, 'background');
     mapGround = game.add.tilemap('mapGround');
@@ -110,7 +103,7 @@ function create(){
     platformLayer.alpha = HIT_AREA_ALPHA;
     mapAds = game.add.tilemap("mapAds");
     enemyManager = new KA.EnemyManager(mapAds,game.cache.getJSON('adsInfo'));
-    enemyManager.test();
+    //enemyManager.test();
     adLayer = mapAds.createLayer('adLayer');
     mapAds.setCollision([1,2]);
     totAdTiles = enemyManager.countTiles();
@@ -120,6 +113,39 @@ function create(){
     KA.player = player;
     game.physics.enable(platformLayer, Phaser.Physics.ARCADE);
     game.time.advancedTiming = true;
+    dayPart = -1;
+    nextDayPart();
+    
+}
+
+function nextDayPart(){
+    dayPart++;
+    if(dayPart>= TOT_DAY_PARTS){
+        endDay();
+        return;
+    }else if (dayPart == 2){
+        KA.NPCManager.goHomeAfterWork();
+    }
+    trace("day part updated to: " + dayPart);
+    bgSky.loadTexture("sky_cycle_" + dayPart);
+    this.game.time.events.add(DAY_PART_DURATION *.5, nextSkyCycle, this);
+}
+
+function nextSkyCycle(){
+    bgSky.loadTexture("sky_cycle_" + dayPart + "b");
+    trace("dayPart: " + dayPart + "b");
+    if(dayPart< TOT_DAY_PARTS && dayPart!=0){
+        this.game.time.events.add(DAY_PART_DURATION *.5, nextDayPart, this);
+    }
+}
+
+function endDay(){
+    trace("END OF DAY")
+    game.state.start("EndOfTheDay");
+}
+
+function gameOver(){
+    game.state.start("GameOver");
 }
 
 function update(){

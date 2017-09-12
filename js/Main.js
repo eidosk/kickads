@@ -8,6 +8,7 @@ window.onload = function(){
     KA.game.state.add("Level", KA.Level);
     KA.game.state.add("WellDone", KA.WellDone);
     KA.game.state.add("GameOver", KA.GameOver);
+    KA.game.state.add("EndOfTheDay", KA.EndOfTheDay);
     KA.game.state.start(START_STATE);
 }
 
