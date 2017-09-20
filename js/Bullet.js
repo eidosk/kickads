@@ -1,5 +1,5 @@
 var KA = KA || {};
-KA.Bullet = function(game, brandId, sx, sy,fx,fy, radius){
+KA.Bullet = function(game, brandId, sx, sy, fx, fy, speed){
     Phaser.Sprite.call(this, game, sx, sy, "bullet");
     game.add.existing(this);
     this.fx = fx;
@@ -7,10 +7,10 @@ KA.Bullet = function(game, brandId, sx, sy,fx,fy, radius){
     this.sx = sx;
     this.sy = sy;
     this.alpha = BULLET_ALPHA;
-    this.radius = radius;
+    this.speed = speed;
     var angle = game.math.angleBetweenY(sx, sy, this.fx, this.fy);
-    this.vx = Math.sin(angle) * radius *.02;
-    this.vy = Math.cos(angle) * radius *.02;
+    this.vx = Math.sin(angle) * this.speed *.02;
+    this.vy = Math.cos(angle) * this.speed *.02;
     this.brandId = brandId;
     this.tint = KA.getTintFromBrandId(brandId);
 }
@@ -20,11 +20,25 @@ KA.Bullet.prototype.constructor = KA.Bullet;
 KA.Bullet.prototype.update = function(){
     this.x += this.vx;
     this.y += this.vy;
-    var dist = Math.abs(Phaser.Math.distance(this.sx, this.sy, this.x, this.y));
     this.checkCollision();
-    if(dist > this.radius){
+    if(this.hasEndedTrajectory()){
         this.doDestroy();
     }
+}
+
+KA.Bullet.prototype.hasEndedTrajectory = function(){
+    if(KA.Emitter.DETECTION_TYPE == 0){//circle
+        var dist = Math.abs(Phaser.Math.distance(this.sx, this.sy, this.x, this.y));
+        if(dist > KA.Emitter.RADIUS){
+            return true;
+        }else{
+            return false;
+        }
+    }else if(KA.Emitter.DETECTION_TYPE == 1){ //x
+        if(this.y > WORLD_HEIGHT) return true;
+        else return false;
+    }
+    return true;
 }
 
 KA.Bullet.prototype.checkCollision = function(){

@@ -48,7 +48,8 @@ KA.NPC.prototype.createBody = function(){
     return body;
 }
 KA.NPC.prototype.onCollision = function(brandId){
-    if(!this.isZombie)this.influence(brandId);   
+    trace("COLL!!!, " + this.isZombie);
+    if(!this.isZombie())this.influence(brandId);   
 }
 
 /*
@@ -69,7 +70,7 @@ KA.NPC.prototype.face = function(x){
 }
 
 KA.NPC.prototype.influence = function(brandId){
-    this.brandInfluence[brandId] += 25;
+    this.brandInfluence[brandId] += BULLET_DAMAGE;
     trace("brandInfluence: "  + this.brandInfluence[brandId]);
     if(this.brandInfluence[brandId]>=25 && this.brandInfluence[brandId]<50){
         trace("BUBBLE LOW!")
@@ -140,10 +141,8 @@ KA.NPC.prototype.isZombie = function(){
 }
 KA.NPC.prototype.onAction = function(player) {
     if(this.isNearPlayer(player)){
+        trace("111");
         this.speak(this.tempRandSentence);
-        
-        //player.speak(this.getRandomSentence());
-        //this.flipX();
     }
 }
 KA.NPC.prototype.isNearPlayer = function(player){
@@ -238,10 +237,16 @@ KA.NPC.prototype.missionComplete = function(){
     trace("Mission " +this.missionId+ " is complete!");
     if(this.missionId == 0)this.state = NPC_STATE_WORKING;
     if(KA.NPCManager.isEverybodyWorking()){
-        nextDayPart()
+        nextDayPart();
     }
-    this.removeSpeechBubble();
+    this.doRemove();
+}
+
+KA.NPC.prototype.doRemove = function(){
+    Signals.doAction.remove(this.onAction, this);
+     this.removeSpeechBubble();
     this.removePopUp();
+    KA.NPCManager.remove(this);
     this.destroy();
 }
 

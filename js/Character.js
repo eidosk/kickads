@@ -68,6 +68,15 @@ KA.Character.prototype.showPopUp = function(){
     }
 }
 
+KA.Character.prototype.isFacingX = function (x){
+    if( (this.scale.x == 1 && this.body.world.x < x) ||
+       (this.scale.x == -1 && this.body.world.x >= x) ){
+        return true;
+    }else{
+        return false;
+    }
+}
+
 KA.Character.prototype.isSpeaking = function(){
     return (this.speechBubble!=null);
 }

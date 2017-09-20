@@ -11,10 +11,19 @@ KA.NPCManager.addNPCs = function(game){
     var char2 = new KA.NPC(game, "business_woman", TEMP_CHAR_2_START_X, WORK_X, GO_TO_WORK);
     this.characters.push(char1);
     this.characters.push(char2);
-    
-    
     //this.characters.push(new KA.NPC(game, "business_woman_zombie"));
 }
+
+KA.NPCManager.remove = function(char){
+    for(i=0; i<this.characters.length; i++){
+        var tChar = this.characters[i];
+        if(tChar == char){
+            this.characters.splice(i, 1);
+        }
+    }
+}
+
+
 KA.NPCManager.checkCollision = function(x, y, brandId){
     var match = false;
     for(i=0; i<this.characters.length; i++){
