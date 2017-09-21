@@ -24,12 +24,14 @@ function preload(){
     game.load.image('square_temp', 'images/enemies/square_temp.png');
     //CHARACTERS
     game.load.spritesheet('dude', 'images/hero_sprites.png', 22, 22, 90);
-    game.load.image('girl', 'images/npcs/girl.png');
-    game.load.image('old_man', 'images/npcs/old_man.png');
-    game.load.image('business_man', 'images/npcs/business_man.png');
-    game.load.image('business_woman', 'images/npcs/business_woman.png');
-    game.load.image('cool_guy', 'images/npcs/cool_guy.png');
-    game.load.spritesheet('npcs', 'images/npcs.png', 22, 30, 32);
+    //game.load.image('girl', 'images/npcs/girl.png');
+    //game.load.image('old_man', 'images/npcs/old_man.png');
+    
+    game.load.spritesheet('business_man', 'images/npcs/business_man.png', 22, 30, 20);
+    game.load.spritesheet('business_woman', 'images/npcs/business_woman.png', 22, 30, 20);
+    
+    //game.load.image('cool_guy', 'images/npcs/cool_guy.png');
+    //game.load.spritesheet('npcs', 'images/npcs.png', 22, 30, 32);
     //BG
     game.load.image("bg_far", "images/bg_far.png");
     game.load.image("background", "images/bg.png");
@@ -181,17 +183,18 @@ function wellDone(){
      game.state.start("WellDone");
 }
 
-
 //KA.Level.prototype.handleCollisions = function(game){
 function handleCollisions(game){
     game.physics.arcade.collide(player, groundLayer);
     if(!jumpingDown)game.physics.arcade.collide(player, platformLayer, null, processPlatformCollide, game);
     game.physics.arcade.collide(player, adLayer, null, processAdCollide, game);
 }
+
 //KA.Level.prototype.getTileX = function(tile){
 function getTileX(tile){
     return tile.x * TILE_WIDTH - game.camera.x;
 }
+
 //KA.Level.prototype.renderEmitters = function(){
 function renderEmitters(){
     var enemies = enemyManager.getEnemies(); //optimize... render only visible... make static
@@ -200,7 +203,6 @@ function renderEmitters(){
         game.debug.geom(tEnemy.emitter.center,'#ff00ff');
     }
 }
-
 /*
 function renderNPCBoundingBoxes(){
     for(i=0; i<KA.NPCManager.characters.length; i++){
@@ -209,7 +211,6 @@ function renderNPCBoundingBoxes(){
     }
 }
 */
-
 function render() {
     if(DEBUG_MODE){
         renderEmitters();

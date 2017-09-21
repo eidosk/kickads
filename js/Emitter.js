@@ -9,17 +9,20 @@ KA.Emitter = function(game, x, y, health, name){
     this.detectionType = "x";
     this.center = new Phaser.Circle(x, y, 4);
     this.emitTimer = game.time.create(false);
-    this.emitTimer.loop(2000, this.emit, this);
+    this.emitTimer.loop(KA.Emitter.LOOP_TIME, this.emit, this);
     this.emitTimer.start();
     this.updateHealth(health);
 }
-//EMITTER SETTINGS
+
+//SETTINGS
 KA.Emitter.RADIUS = 100;
+KA.Emitter.LOOP_TIME = 3000;
 KA.Emitter.DETECTION_TYPE = 1;  //0 is circle, 1 is x
 KA.Emitter.EMIT_TYPE = 1; //0 is bullet, 1 is ray
 
+
 KA.Emitter.constructor = KA.Emitter;
-KA.Emitter.prototype = Object.create(Phaser.Sprite.prototype); 
+KA.Emitter.prototype = Object.create(Phaser.Sprite.prototype);
 KA.Emitter.prototype.update = function(){
     //this.updateCircle();
 }
@@ -62,9 +65,6 @@ KA.Emitter.prototype.updateCircleGfx = function(){
 }
 //function emit(){
 KA.Emitter.prototype.emit = function(){
-    trace("emit!!!");
-    
-    
     if(IS_PLAYER_A_TARGET){
         var fx = KA.player.body.x + KA.player.body.width*.5; //player
         var fy = KA.player.body.y + KA.player.body.height*.5;
@@ -93,28 +93,29 @@ KA.Emitter.prototype.checkTarget = function(target){
     if(KA.Emitter.isCircleDetectionType()){ //circle
         var dist = Phaser.Math.distance(this.x, this.y, x, y);
         if(dist <= KA.Emitter.RADIUS){
-            this.shootTarget(x,y);
+            this.shootTarget(target, x, y);
         }
     }else if(KA.Emitter.DETECTION_TYPE==1){ //x
         if(target.isFacingX(this.x) && Math.abs(x - this.x) < 100){
-            this.shootTarget(x,y);
+            this.shootTarget(target, x, y);
         }
     }
 }
 
-KA.Emitter.prototype.shootTarget = function(x,y){
+KA.Emitter.prototype.shootTarget = function(target, x,y){
     if(KA.Emitter.EMIT_TYPE==0)new KA.Bullet(KA.game, this.brandId, this.x, this.y, x, y, BULLET_SPEED);
     else if(KA.Emitter.EMIT_TYPE==1){
         this.shootRay(x,y);
+        target.onCollision(0);
     }
 }
 
 KA.Emitter.prototype.shootRay = function(x,y){
     if(this.graphics) this.graphics.destroy();
     this.graphics = this.game.add.graphics(this.x, this.y);
-    this.graphics.lineStyle(1, 0xFFFF0B, HIT_AREA_ALPHA);
+    this.graphics.lineStyle(1, TINT_SODA, .5);
     this.graphics.lineTo(x - this.x, y - this.y);
-    this.graphics.beginFill(0xFFFF0B, HIT_AREA_ALPHA);
+    this.graphics.beginFill(TINT_SODA, .5);
     this.game.time.events.add(200, this.destroyGraphics, this);
 }
 

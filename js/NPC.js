@@ -1,23 +1,36 @@
 var KA = KA || {};
 
-//-------- BUBBLES 12x13 -------//
 /*
-bubbles.animations.add('bubble_low', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12, 12, 12, 12], 5, true);
-bubbles.animations.add('bubble_mid', [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 29, 29], 5, true);
-bubbles.animations.add('bubble_high', [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46], 5, true);
+
+//------- NPCs 22X30 -------//
+girl.animations.add('idle', [0], 5, false);
+girl.animations.add('walk', [1, 2, 3, 4], 5, true);
+old_man.animations.add('walk', [5, 6, 7, 8, 9, 10, 11, 12], 5, true);
+business_man.animations.add('idle', [0], 5, false);
+business_man.animations.add('walk', [1, 2, 3, 4, 5, 6, 7, 8], 5, true);
+business_man.animations.add('idle_zombie', [9], 5, false);
+business_man.animations.add('walk_zombie', [15, 16, 17, 18, 19, 20, 21, 22], 5, true);
 */
+
+
 
 
 KA.NPC = function(game, name, x, fx, mission){
     //if (typeof(direction)==='undefined') direction = 1;
     this.name = name;
-    Phaser.Sprite.call(this, game, x, 0, "npcs");
+    Phaser.Sprite.call(this, game, x, 0, name);
     game.add.existing(this);
     this.assignAnimations();
     this.missionId = -1;
     this.missionX = fx;
     this.state = NPC_STATE_IDLE;
     this.setMission(mission);
+    
+    this.animations.add('idle', [0], 5, false);
+    this.animations.add('walk', [1, 2, 3, 4, 5, 6, 7, 8], 5, true);
+    this.animations.add('idle_zombie', [9], 5, false);
+    this.animations.add('walk_zombie', [15, 16, 17, 18, 19, 20, 21, 22], 5, true);
+    
     this.animations.play("walk");
     this.y = FLOOR_Y - this.height;
     this.speedPerc = NPC_SPEED_PERC;
@@ -70,7 +83,7 @@ KA.NPC.prototype.face = function(x){
 }
 
 KA.NPC.prototype.influence = function(brandId){
-    this.brandInfluence[brandId] += BULLET_DAMAGE;
+    this.brandInfluence[brandId] += HIT_DAMAGE;
     trace("brandInfluence: "  + this.brandInfluence[brandId]);
     if(this.brandInfluence[brandId]>=25 && this.brandInfluence[brandId]<50){
         trace("BUBBLE LOW!")
@@ -85,22 +98,37 @@ KA.NPC.prototype.influence = function(brandId){
         this.gotoTheShop();
     }
     this.stun();
-    this.game.time.events.add(1000, this.recoverFromStun, this);
+    
 }
 
-
 KA.NPC.prototype.stun = function(){
+    this.animations.stop();
+    this.animations.frame = 0;
     this.stunned = true;
+    if(this.areThereBubbles())this.bubbles.alpha = 0;
     this.thoughtBubble = this.game.make.sprite(11, 13,'influence_bubbles');
     this.thoughtBubble.x = -10;
     this.thoughtBubble.y = -12;
     this.thoughtBubble.frame = 2;
     this.addChild(this.thoughtBubble);
-    
+    this.game.time.events.add(1000, this.recoverFromStun, this);
+}
+
+
+KA.NPC.prototype.recoverFromStun = function(){
+    this.animations.play("walk");
+    this.stunned = false;
+    if(this.areThereBubbles())this.bubbles.alpha = 1;
+    if(this.thoughtBubble!=null)this.removeChild(this.thoughtBubble);
+}
+
+
+KA.NPC.prototype.areThereBubbles = function(){
+    return (this.children.indexOf(this.bubbles) != -1);
 }
 
 KA.NPC.prototype.showBubbles = function(name){
-    if(this.children.indexOf(this.bubbles) == -1)this.addChild(this.bubbles);
+    if(!this.areThereBubbles())this.addChild(this.bubbles);
     else trace("already exists");
     this.bubbles.x = -this.bubbles.width * .5;
     this.bubbles.y = -10;
@@ -120,10 +148,7 @@ KA.NPC.prototype.gotoTheShop = function(){
 
  
 
-KA.NPC.prototype.recoverFromStun = function(){
-    this.stunned = false;
-    if(this.thoughtBubble!=null)this.removeChild(this.thoughtBubble);
-}
+
 
 KA.NPC.prototype.zombify = function(brandId){
     this.name = "business_woman_zombie";

@@ -38,16 +38,6 @@ KA.NPCManager.checkCollision = function(x, y, brandId){
 }
 
 KA.NPCManager.goHomeAfterWork = function(){
-    /*
-        for(i=0; i<this.characters.length; i++){
-            var char = this.characters[i];
-            char.goHome();
-        }
-        
-
-    ]
-    
-    */
     var char1 = new KA.NPC(game, "business_man", WORK_X,TEMP_CHAR_1_START_X, GO_HOME);
     var char2 = new KA.NPC(game, "business_woman", WORK_X, TEMP_CHAR_2_START_X, GO_HOME)
     this.characters.push(char1);
