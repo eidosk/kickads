@@ -1,60 +1,74 @@
 var KA = KA || {};
-
-//Object with info about the tiles
-KA.Enemy = function(tManager, tInfo, tTiles){
-    this.manager = tManager;
-    this.info = tInfo;
-    this.name = tInfo.name;
-    this.tiles = tTiles.slice(1); //cut out first element
-    var fx = (this.info.firstTile.x + this.info.width*.5) * TILE_WIDTH;
-    var fy = (this.info.firstTile.y + this.info.height*.5) * TILE_WIDTH;
-    this.emitter = new KA.Emitter(KA.game, fx, fy, tTiles.length, this.name);
-    Signals.removeTile.add(this.onRemoveTile, this);
-    /*
-    timer = game.time.create(false);
-    timer.loop(2000, updateCounter, this);
-    timer.start();
-    */
+/* CONSTRUCTOR */
+KA.Enemy = function(game, x, y, name){
+    Phaser.Sprite.call(this, game, x, y, name);
+    this.x = x;
+    this.y = y;
+    this.name = name;
 }
 
-/*
-function updateCounter() {
-    //update code
+KA.Enemy.prototype = Object.create(Phaser.Sprite.prototype); 
+KA.Enemy.prototype.constructor = KA.Bullet;
+
+/* CONSTANTS */
+KA.Enemy.KICK_DAMAGE = 3.5;
+
+/* FUNCTIONS */
+KA.Enemy.prototype.init = function(){
+    //this.shown = true;
+    game.add.existing(this);
+    this.frame = 0;
+    //this.shown = false;
+    this.totFrames = this.animations.frameTotal / 4;
+    this.health = (this.width / TILE_WIDTH) * (this.height / TILE_WIDTH);
+    this.destruction = 0;
+    this.destructionStep = this.health / this.totFrames;
+    this.particleEmitter = null;
+    var fx = this.x + this.width * .5;
+    var fy = this.y + this.height * .5;
+    this.emitter = new KA.Emitter(game, fx, fy, 100, this.name);
+    Signals.kick.add(this.onKick, this);
 }
-*/
-KA.Enemy.constructor = KA.Enemy;
-KA.Enemy.prototype.onRemoveTile = function(tile){
-    var match = -1;
-    for(i=0; i < this.tiles.length; i++){
-        var tTile = this.tiles[i];
-        if (tTile == null) break;
-        if(this.doTilesMatch(tile, tTile)){
-            match = i;
-            break;
+
+KA.Enemy.prototype.update = function(){
+    
+}
+
+KA.Enemy.prototype.onKick = function(){
+    var cx = KA.player.x + 11 * KA.player.scale.x;
+    var cy = KA.player.y + 13;
+    //KA.game.add.sprite(cx, cy, "pixel"); //DEBUG
+    if(KA.Collision.hitTestPoint(this, cx, cy)){
+        this.emitParticles(cx, cy);
+        this.destruction += KA.Enemy.KICK_DAMAGE;
+        var frame = Math.floor(this.destruction / this.destructionStep);    
+        if(this.frame < this.totFrames-1){
+            this.frame = frame;
+        }else{
+            //this.alpha = 0;
+            var tween = this.game.add.tween(this).to( { alpha: 0.1, y: this.y + 12 }, 300, Phaser.Easing.Linear.None, true);
+            tween.onComplete.add(this.doDestroy, this);
         }
     }
-    if(match>=0){
-        this.tiles.splice(match,1);
-        var health = this.getHealth();
-        this.emitter.updateHealth(health);
-        if(health == 0){
-            this.destroy();
-        }
-    }
 }
 
-KA.Enemy.prototype.getHealth = function(){
-    return this.tiles.length;
+KA.Enemy.prototype.emitParticles = function(cx, cy){
+    //if(this.particleEmitter!=null)this.destroyParticleEmitter();
+    var particleEmitter = this.game.add.emitter(cx, cy, 10);
+    particleEmitter.alpha = .75;
+    var time = 500;
+    particleEmitter.makeParticles(['particle_01', 'particle_02', 'particle_03']);
+    //particleEmitter.gravity = 5;
+    particleEmitter.start(true, 1000, null, 10);
+    this.game.time.events.add(500, this.destroyParticleEmitter, this, particleEmitter);
 }
 
-
-KA.Enemy.prototype.doTilesMatch = function(tile1, tile2){
-    return tile1.x == tile2.x && tile1.y == tile2.y && tile1.index == tile2.index;
+KA.Enemy.prototype.destroyParticleEmitter = function(particleEmitter){
+    particleEmitter.destroy();
 }
 
-KA.Enemy.prototype.destroy = function(){
-    Signals.removeTile.remove(this.onRemoveTile, this);
-    this.emitter.remove();
-    this.manager.removeEnemy(this);
+KA.Enemy.prototype.doDestroy = function(){
+    this.emitter.doDestroy();
+    Signals.kick.remove(this.onKick, this);
+    this.destroy();
 }
-

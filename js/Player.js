@@ -115,7 +115,7 @@ KA.Player.prototype.isKicking = function(){
     return state==KICK || state==KICK_AIR;
 }
 KA.Player.prototype.onRunAnimComplete = function(){
-    //trace("AIR!");
+    ////trace("AIR!");
     needsAir = true;
     runCounter = 0;
     this.playAnim(RUN_BREATHE);
@@ -147,7 +147,7 @@ KA.Player.prototype.restoreTint = function(){
 }
 
 KA.Player.prototype.update = function(){
-    //trace("x: " + this.x);
+    ////trace("x: " + this.x);
     if(state==SPLAT || state==LAND_HARD)return; //must wait for end of land hard or splate animations
     if(jumpingDown){
         jumpDownCounter++;

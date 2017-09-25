@@ -18,18 +18,21 @@ function preload(){
     //TILES
     game.load.image('groundTile', 'images/groundTile.png');
     game.load.image('platformTile', 'images/platformTile.png');
-    //ADS
+    //ENEMIES
     game.load.image('billboard_temp', 'images/enemies/billboard_temp.png');
     game.load.image('banner_temp', 'images/enemies/banner_temp.png');
     game.load.image('square_temp', 'images/enemies/square_temp.png');
+    
+    game.load.spritesheet('billboard', 'images/enemies/billboard.png', 120, 60, 24);
+    game.load.spritesheet('banner', 'images/enemies/banner.png', 24, 60, 12);
+    game.load.spritesheet('square', 'images/enemies/square.png', 36, 36, 12);    
+    
     //CHARACTERS
     game.load.spritesheet('dude', 'images/hero_sprites.png', 22, 22, 90);
     //game.load.image('girl', 'images/npcs/girl.png');
     //game.load.image('old_man', 'images/npcs/old_man.png');
-    
     game.load.spritesheet('business_man', 'images/npcs/business_man.png', 22, 30, 20);
     game.load.spritesheet('business_woman', 'images/npcs/business_woman.png', 22, 30, 20);
-    
     //game.load.image('cool_guy', 'images/npcs/cool_guy.png');
     //game.load.spritesheet('npcs', 'images/npcs.png', 22, 30, 32);
     //BG
@@ -38,6 +41,9 @@ function preload(){
     //OTHER
     game.load.image("bullet", "images/bullet.png");
     game.load.image("pixel", "images/pixel.png");
+    game.load.image("particle_01", "images/particle_01.png");
+    game.load.image("particle_02", "images/particle_02.png");
+    game.load.image("particle_03", "images/particle_03.png");
     game.load.image("speech_corner", "images/speech_corner.png");
     game.load.image("speech_arrow", "images/speech_arrow.png");
     game.load.image("speech_body", "images/speech_body.png");
@@ -117,9 +123,7 @@ function create(){
     game.time.advancedTiming = true;
     dayPart = -1;
     nextDayPart();
-    
 }
-
 function nextDayPart(){
     dayPart++;
     if(dayPart>= TOT_DAY_PARTS){
@@ -128,28 +132,24 @@ function nextDayPart(){
     }else if (dayPart == 2){
         KA.NPCManager.goHomeAfterWork();
     }
-    trace("day part updated to: " + dayPart);
+    //trace("day part updated to: " + dayPart);
     bgSky.loadTexture("sky_cycle_" + dayPart);
     this.game.time.events.add(DAY_PART_DURATION *.5, nextSkyCycle, this);
 }
-
 function nextSkyCycle(){
     bgSky.loadTexture("sky_cycle_" + dayPart + "b");
-    trace("dayPart: " + dayPart + "b");
+    //trace("dayPart: " + dayPart + "b");
     if(dayPart< TOT_DAY_PARTS && dayPart!=0){
         this.game.time.events.add(DAY_PART_DURATION *.5, nextDayPart, this);
     }
 }
-
 function endDay(){
-    trace("END OF DAY")
+    //trace("END OF DAY")
     game.state.start("EndOfTheDay");
 }
-
 function gameOver(){
     game.state.start("GameOver");
 }
-
 function update(){
     //bgFar.x+=.01;
     bgFar.x= game.camera.x*0.03;
@@ -163,12 +163,12 @@ function processPlatformCollide(spriteThatCollided, tileThatCollided){
     if(py<=ty)return true;
     else return false;
 }
-//KA.Level.prototype.processAdCollide = function(playerSprite, adTile){
+/*
 function processAdCollide(playerSprite, adTile){
     if(adTile.index!=-1){
         if(player.isKicking()){
             Signals.removeTile.dispatch(adTile);
-            trace("DISPATCH!")
+            //trace("DISPATCH!")
             mapAds.removeTile(adTile.x, adTile.y);
             totAdTiles--;
             if(totAdTiles<1){
@@ -177,36 +177,36 @@ function processAdCollide(playerSprite, adTile){
         }
     }
     return false;
-}
+}*/
 //KA.Level.prototype.wellDone = function(){
 function wellDone(){
      game.state.start("WellDone");
 }
-
 //KA.Level.prototype.handleCollisions = function(game){
 function handleCollisions(game){
     game.physics.arcade.collide(player, groundLayer);
     if(!jumpingDown)game.physics.arcade.collide(player, platformLayer, null, processPlatformCollide, game);
-    game.physics.arcade.collide(player, adLayer, null, processAdCollide, game);
+    //game.physics.arcade.collide(player, adLayer, null, processAdCollide, game);
 }
-
 //KA.Level.prototype.getTileX = function(tile){
 function getTileX(tile){
     return tile.x * TILE_WIDTH - game.camera.x;
 }
-
 //KA.Level.prototype.renderEmitters = function(){
 function renderEmitters(){
     var enemies = enemyManager.getEnemies(); //optimize... render only visible... make static
     for(i=0; i<enemies.length; i++){
-        var tEnemy = enemies[i];
-        game.debug.geom(tEnemy.emitter.center,'#ff00ff');
+        for(j=0; j<enemies[i].length; j++){
+            var tEnemy = enemies[i][j];
+            game.debug.geom(tEnemy.emitter.center,'#ff00ff');
+        }
+        
     }
 }
 /*
 function renderNPCBoundingBoxes(){
     for(i=0; i<KA.NPCManager.characters.length; i++){
-        trace(KA.NPCManager.characters[i]);
+        //trace(KA.NPCManager.characters[i]);
         game.debug.body(KA.NPCManager.characters[i]);
     }
 }

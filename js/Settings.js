@@ -2,10 +2,14 @@ var KA = KA || {};
 
 
 //GAMEPLAY
-var HIT_DAMAGE = 10;
+var HIT_DAMAGE = 5;
 //var TEMP_CHAR_1_START_X = 300;
-var TEMP_CHAR_1_START_X = 130;
-var TEMP_CHAR_2_START_X = 1149;
+var TEMP_CHAR_1_START_X = 133;
+var TEMP_CHAR_2_START_X = 1154;
+var TEMP_BALANCE = 500;
+
+var WORK_X = 489;
+var SHOP_X = 692;
 //var TEMP_CHAR_2_START_X = 500;
 
 //ALPHA
@@ -74,8 +78,7 @@ var BRAND = {
 var GO_TO_WORK = 0;
 var GO_TO_SHOP = 1;
 var GO_HOME = 2;
-var WORK_X = 485;
-var SHOP_X = 754;
+
 var PART_MORNING_COMMUTE = 0;
 var PART_WORKING = 1;
 var PART_EVENING_COMMUTE = 2;

@@ -3,14 +3,17 @@ KA.NPCManager = {
     characters:[]
 }
 KA.NPCManager.addNPCs = function(game){
-    trace("ADD NPCS!");
+    //trace("ADD NPCS!");
     //this.characters.push(new KA.NPC(game, "girl"));
     //this.characters.push(new KA.NPC(game, "old_man"));
     //this.characters.push(new KA.NPC(game, "cool_guy"));
     var char1 = new KA.NPC(game, "business_man", TEMP_CHAR_1_START_X, WORK_X, GO_TO_WORK);
-    var char2 = new KA.NPC(game, "business_woman", TEMP_CHAR_2_START_X, WORK_X, GO_TO_WORK);
     this.characters.push(char1);
+    
+    var char2 = new KA.NPC(game, "business_woman", TEMP_CHAR_2_START_X, WORK_X, GO_TO_WORK);
     this.characters.push(char2);
+    
+    
     //this.characters.push(new KA.NPC(game, "business_woman_zombie"));
 }
 
@@ -71,7 +74,7 @@ KA.NPCManager.isEverybodyZombie = function(){
 KA.NPCManager.isPlayerNear = function(){
     var result = false;
     for(i=0; i<this.characters.length; i++){
-        trace("loop");
+        //trace("loop");
         var char = this.characters[i];
         if(char.isNearPlayer(KA.player)){
             result = true;

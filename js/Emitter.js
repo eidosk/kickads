@@ -8,21 +8,29 @@ KA.Emitter = function(game, x, y, health, name){
     this.y = y;
     this.detectionType = "x";
     this.center = new Phaser.Circle(x, y, 4);
+    /*this.emitTimer = game.time.create(false);
+    this.timerLoop = this.emitTimer.loop(KA.Emitter.LOOP_TIME, this.emit, this);    
+    this.emitTimer.start();*/
+    
     this.emitTimer = game.time.create(false);
     this.emitTimer.loop(KA.Emitter.LOOP_TIME, this.emit, this);
     this.emitTimer.start();
+    
     this.updateHealth(health);
 }
+KA.Emitter.constructor = KA.Emitter;
+KA.Emitter.prototype = Object.create(Phaser.Sprite.prototype);
 
-//SETTINGS
+/* CONSTANTS */
 KA.Emitter.RADIUS = 100;
-KA.Emitter.LOOP_TIME = 3000;
+KA.Emitter.LOOP_TIME = 4000;
 KA.Emitter.DETECTION_TYPE = 1;  //0 is circle, 1 is x
 KA.Emitter.EMIT_TYPE = 1; //0 is bullet, 1 is ray
 
-
-KA.Emitter.constructor = KA.Emitter;
-KA.Emitter.prototype = Object.create(Phaser.Sprite.prototype);
+/* FUNCTIONS */
+KA.Emitter.isCircleDetectionType = function(){
+    return KA.Emitter.DETECTION_TYPE==0;
+}
 KA.Emitter.prototype.update = function(){
     //this.updateCircle();
 }
@@ -50,12 +58,10 @@ KA.Emitter.prototype.getBrandId = function(name){
     //return brandId;
     return 0; //temp for testing
 }
-
 KA.Emitter.prototype.updateHealth = function(health){
     this.health = health;
     if(KA.Emitter.isCircleDetectionType())this.updateCircleGfx();
 }
-
 KA.Emitter.prototype.updateCircleGfx = function(){
     if(this.graphics) this.graphics.destroy();
     this.graphics = this.game.add.graphics(this.x, this.y);
@@ -63,7 +69,6 @@ KA.Emitter.prototype.updateCircleGfx = function(){
     this.graphics.beginFill(0xFFFF0B, HIT_AREA_ALPHA);
     this.graphics.drawCircle(0, 0, KA.Emitter.RADIUS);
 }
-//function emit(){
 KA.Emitter.prototype.emit = function(){
     if(IS_PLAYER_A_TARGET){
         var fx = KA.player.body.x + KA.player.body.width*.5; //player
@@ -76,10 +81,6 @@ KA.Emitter.prototype.emit = function(){
         if(!char.isZombie())this.checkTarget(char);
     }
 }
-KA.Emitter.isCircleDetectionType = function(){
-    return KA.Emitter.DETECTION_TYPE==0;
-}
-
 KA.Emitter.prototype.checkTarget = function(target){
     var x;
     var y;
@@ -101,7 +102,6 @@ KA.Emitter.prototype.checkTarget = function(target){
         }
     }
 }
-
 KA.Emitter.prototype.shootTarget = function(target, x,y){
     if(KA.Emitter.EMIT_TYPE==0)new KA.Bullet(KA.game, this.brandId, this.x, this.y, x, y, BULLET_SPEED);
     else if(KA.Emitter.EMIT_TYPE==1){
@@ -109,7 +109,6 @@ KA.Emitter.prototype.shootTarget = function(target, x,y){
         target.onCollision(0);
     }
 }
-
 KA.Emitter.prototype.shootRay = function(x,y){
     if(this.graphics) this.graphics.destroy();
     this.graphics = this.game.add.graphics(this.x, this.y);
@@ -118,14 +117,11 @@ KA.Emitter.prototype.shootRay = function(x,y){
     this.graphics.beginFill(TINT_SODA, .5);
     this.game.time.events.add(200, this.destroyGraphics, this);
 }
-
 KA.Emitter.prototype.destroyGraphics = function(){
     if(this.graphics) this.graphics.destroy();
 }
-
-
-
-KA.Emitter.prototype.remove = function(){
+KA.Emitter.prototype.doDestroy = function(){
+    this.emitTimer.stop();
     this.emitTimer.destroy();
     if(this.graphics) this.graphics.destroy();
     this.destroy();
