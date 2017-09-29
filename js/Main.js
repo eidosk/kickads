@@ -37,7 +37,12 @@ function round(value){
 
 function pressAnyKey(){
     bmpText = game.add.bitmapText(10, 26, 'myfont','Press any key', 16);
+    onKeyDown();
+}
+
+function onKeyDown(){
     game.input.keyboard.onDownCallback = function(){
         game.state.start("Level");
     }
 }
+

@@ -1,5 +1,21 @@
 var KA = KA || {};
+var groundTilemap, platformTilemap, enemiesTilemap;
+var groundLayer, platformLayer, adLayer;
+var enemyManager;
+var player;
+var facing = 'left';
+var waiting = false;
+var bg;
+var bgFar;
+var bgSky;
+var deltaY = 5;
+var prevY = 0;
+var totAdTiles;
+var game;
+var dayPart;
+
 KA.Level = {init:init, preload: preload, create:create, update:update, render:render};
+
 function init(){
     game = this.game;
     game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
@@ -9,19 +25,21 @@ function init(){
     game.stage.smoothed = false;
     //game.kickSignal = new Phaser.Signal();
 }
+
 function preload(){
     //JSON FILES
-    game.load.tilemap('mapGround', 'images/level1.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.tilemap('mapPlatform', 'images/level1platform.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.tilemap('mapAds', 'images/level1ads.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.json('adsInfo', 'images/level1ads.json');
+    game.load.tilemap('groundTilemap', 'data/ground.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('platformTilemap', 'data/platform.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('enemiesTilemap', 'data/enemies.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.json('adsInfo', 'data/enemies.json');
+    game.load.json('objectsInfo', 'data/objects.json');
     //TILES
-    game.load.image('groundTile', 'images/groundTile.png');
-    game.load.image('platformTile', 'images/platformTile.png');
+    game.load.image('groundTile', 'images/tiles/ground.png');
+    game.load.image('platformTile', 'images/tiles/platform.png');
     //ENEMIES
-    game.load.image('billboard_temp', 'images/enemies/billboard_temp.png');
-    game.load.image('banner_temp', 'images/enemies/banner_temp.png');
-    game.load.image('square_temp', 'images/enemies/square_temp.png');
+    game.load.image('billboard_ph', 'images/enemies/billboard_ph.png');
+    game.load.image('banner_ph', 'images/enemies/banner_ph.png');
+    game.load.image('square_ph', 'images/enemies/square_ph.png');
     
     game.load.spritesheet('billboard', 'images/enemies/billboard.png', 120, 60, 24);
     game.load.spritesheet('banner', 'images/enemies/banner.png', 24, 60, 12);
@@ -49,38 +67,19 @@ function preload(){
     game.load.image("speech_body", "images/speech_body.png");
     game.load.image("button_x", "images/button_x.png");
     game.load.image("sky_cycle_0", "images/sky_cycle_0.png");
-    game.load.image("sky_cycle_0b", "images/sky_cycle_0b.png");
     game.load.image("sky_cycle_1", "images/sky_cycle_1.png");
-    game.load.image("sky_cycle_1b", "images/sky_cycle_1b.png");
     game.load.image("sky_cycle_2", "images/sky_cycle_2.png");
-    game.load.image("sky_cycle_2b", "images/sky_cycle_2b.png");
     game.load.image("sky_cycle_3", "images/sky_cycle_3.png");
-    game.load.image("sky_cycle_3b", "images/sky_cycle_3b.png");
+    game.load.image("sky_cycle_4", "images/sky_cycle_4.png");
+    game.load.image("sky_cycle_5", "images/sky_cycle_5.png");
+    game.load.image("sky_cycle_6", "images/sky_cycle_6.png");
+    game.load.image("sky_cycle_7", "images/sky_cycle_7.png");
     game.load.spritesheet("influence_bubbles", "images/influence_bubbles.png",11,13, 4);
     game.load.spritesheet("bubbles", "images/bubbles.png", 12, 13, 47);
+    
     //FONT
     game.load.bitmapFont('myfont', 'fonts/font.png', 'fonts/font.fnt');
 }
-var mapGround;
-var mapPlatform;
-var mapAds;
-var groundLayer;
-var platformLayer;
-var adLayer;
-var enemyManager;
-/*
-var testLayer;
-var scaffoldLayer;
-*/
-var player;
-var facing = 'left';
-var bg;
-var bgFar;
-var bgSky;
-var deltaY = 5;
-var prevY = 0;
-var totAdTiles;
-var game;
 
 function create(){
     game.physics.startSystem(Phaser.Physics.ARCADE); //enable arcade physics
@@ -89,95 +88,95 @@ function create(){
     bgFar.alpha = .7;
     bg = game.add.sprite(0, 0,'background');
     //bg = game.add.tileSprite(0, 0, WORLD_WIDTH, WORLD_HEIGHT, 'background');
-    mapGround = game.add.tilemap('mapGround');
-    mapGround.addTilesetImage('groundTile', 'groundTile');
-    groundLayer = mapGround.createLayer('groundLayer');
+    groundTilemap = game.add.tilemap('groundTilemap');
+    groundTilemap.addTilesetImage('groundTile', 'groundTile');
+    groundLayer = groundTilemap.createLayer('groundLayer');
     groundLayer.resizeWorld(); 
     //game.physics.arcade.enable(groundLayer);  
-    mapGround.setCollision(1);
+    groundTilemap.setCollision(1);
     groundLayer.alpha = HIT_AREA_ALPHA;
-    mapPlatform = game.add.tilemap("mapPlatform");
-    mapPlatform.addTilesetImage('platformTile', 'platformTile');
-    /*
-    mapPlatform.addTilesetImage('building_01', 'building_01');
-    mapPlatform.addTilesetImage('billboard_scaffold', 'billboard_scaffold');
-    platformLayer = mapPlatform.createLayer('platformLayer');
-    testLayer = mapPlatform.createLayer('buildingsLayer');
-    scaffoldLayer = mapPlatform.createLayer('scaffoldLayer');
-    */
-    platformLayer = mapPlatform.createLayer('platformLayer');
+    platformTilemap = game.add.tilemap("platformTilemap");
+    platformTilemap.addTilesetImage('platformTile', 'platformTile');
+    platformLayer = platformTilemap.createLayer('platformLayer');
     platformLayer.resizeWorld();
-    mapPlatform.setCollision(1);
+    platformTilemap.setCollision(1);
     platformLayer.alpha = HIT_AREA_ALPHA;
-    mapAds = game.add.tilemap("mapAds");
-    enemyManager = new KA.EnemyManager(mapAds,game.cache.getJSON('adsInfo'));
+    enemiesTilemap = game.add.tilemap("enemiesTilemap");
+    enemyManager = new KA.EnemyManager(enemiesTilemap, game.cache.getJSON('adsInfo'));
+    
+    var objectsInfo = game.cache.getJSON('objectsInfo');
+    
     //enemyManager.test();
-    adLayer = mapAds.createLayer('adLayer');
-    mapAds.setCollision([1,2]);
+    adLayer = enemiesTilemap.createLayer('adLayer');
+    enemiesTilemap.setCollision([1,2]);
     totAdTiles = enemyManager.countTiles();
     game.physics.arcade.gravity.y = GRAVITY;
-    KA.NPCManager.addNPCs(game);
-    player = new KA.Player(this.game, 'dude');
+    KA.NPCManager.addNPCs(game, objectsInfo);
+    
+    var px = objectsInfo.layers[1].objects[4].x;
+    var py = objectsInfo.layers[1].objects[4].y;
+    
+    player = new KA.Player(this.game, 'dude', px, py);
     KA.player = player;
     game.physics.enable(platformLayer, Phaser.Physics.ARCADE);
     game.time.advancedTiming = true;
     dayPart = -1;
     nextDayPart();
+    
+    
+    //endDay();
 }
+
 function nextDayPart(){
     dayPart++;
-    if(dayPart>= TOT_DAY_PARTS){
-        endDay();
-        return;
-    }else if (dayPart == 2){
-        KA.NPCManager.goHomeAfterWork();
-    }
-    //trace("day part updated to: " + dayPart);
+    trace("day part updated to: " + dayPart);
     bgSky.loadTexture("sky_cycle_" + dayPart);
-    this.game.time.events.add(DAY_PART_DURATION *.5, nextSkyCycle, this);
+    this.game.time.events.add(DAY_PART_DURATION *.5, checkBeforeNextDayPart, this);
+    waiting = false;
 }
-function nextSkyCycle(){
-    bgSky.loadTexture("sky_cycle_" + dayPart + "b");
-    //trace("dayPart: " + dayPart + "b");
-    if(dayPart< TOT_DAY_PARTS && dayPart!=0){
-        this.game.time.events.add(DAY_PART_DURATION *.5, nextDayPart, this);
+
+function checkBeforeNextDayPart(){
+    if(dayPart == 4){
+        KA.NPCManager.everybodyGoHomeAfterWork();
+    }
+    if(dayPart == 1 && !KA.NPCManager.isEverybodyWorking()){
+        trace("Wait...");
+        waiting = true;
+    }else if(dayPart == 5 && !KA.NPCManager.isEverybodyHome()){
+        trace("Wait...");
+        waiting = true;
+    }else if(dayPart>= TOT_DAY_PARTS-1){
+        endDay();
+    }else{
+        nextDayPart();
     }
 }
+
+function isWaitingForNpcs(){
+    return waiting;
+}
+
 function endDay(){
-    //trace("END OF DAY")
+    ////trace("END OF DAY")
     game.state.start("EndOfTheDay");
 }
+
 function gameOver(){
     game.state.start("GameOver");
 }
+
 function update(){
     //bgFar.x+=.01;
     bgFar.x= game.camera.x*0.03;
     handleCollisions(this);
 }
 //makes sure the player will land on the platform only when falling from above
-//KA.Level.prototype.processPlatformCollide = function(spriteThatCollided, tileThatCollided){
 function processPlatformCollide(spriteThatCollided, tileThatCollided){
     var py = spriteThatCollided.y + spriteThatCollided.height;
     var ty = tileThatCollided.y * 12
     if(py<=ty)return true;
     else return false;
 }
-/*
-function processAdCollide(playerSprite, adTile){
-    if(adTile.index!=-1){
-        if(player.isKicking()){
-            Signals.removeTile.dispatch(adTile);
-            //trace("DISPATCH!")
-            mapAds.removeTile(adTile.x, adTile.y);
-            totAdTiles--;
-            if(totAdTiles<1){
-                wellDone();
-            }
-        }
-    }
-    return false;
-}*/
 //KA.Level.prototype.wellDone = function(){
 function wellDone(){
      game.state.start("WellDone");
@@ -200,13 +199,12 @@ function renderEmitters(){
             var tEnemy = enemies[i][j];
             game.debug.geom(tEnemy.emitter.center,'#ff00ff');
         }
-        
     }
 }
 /*
 function renderNPCBoundingBoxes(){
     for(i=0; i<KA.NPCManager.characters.length; i++){
-        //trace(KA.NPCManager.characters[i]);
+        ////trace(KA.NPCManager.characters[i]);
         game.debug.body(KA.NPCManager.characters[i]);
     }
 }

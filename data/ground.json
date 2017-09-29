@@ -1,7 +1,7 @@
 { "height":30,
  "layers":[
         {
-         "image":"..\/..\/..\/..\/..\/..\/..\/Applications\/MAMP\/htdocs\/adkiller\/images\/bg.png",
+         "image":"..\/images\/bg.png",
          "name":"bgLayer",
          "opacity":1,
          "type":"imagelayer",
@@ -29,7 +29,7 @@
         {
          "columns":1,
          "firstgid":1,
-         "image":"groundTile.png",
+         "image":"..\/images\/tiles\/ground.png",
          "imageheight":12,
          "imagewidth":12,
          "margin":0,

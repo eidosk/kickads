@@ -1,13 +1,10 @@
 var KA = KA || {};
-
-
 //GAMEPLAY
-var HIT_DAMAGE = 5;
+var HIT_DAMAGE = 1;
 //var TEMP_CHAR_1_START_X = 300;
 var TEMP_CHAR_1_START_X = 133;
 var TEMP_CHAR_2_START_X = 1154;
 var TEMP_BALANCE = 500;
-
 var WORK_X = 489;
 var SHOP_X = 692;
 //var TEMP_CHAR_2_START_X = 500;
@@ -34,18 +31,18 @@ var PLATFORM_X = 180;
 var MC_X = 110;
 //TIME
 //PHYSICS
-var DAY_PART_DURATION = 30000; //ms
+var DAY_PART_DURATION = 5000; //ms
 var ATTACK_SPEED = 120;
 var BULLET_SPEED = 100;
 var RUN_SPEED = 100;
 var JUMP_SPEED = 150;
 var SPEED_X = .3;
 var GRAVITY = 400;
-var NPC_SPEED_PERC = .2;
+var NPC_SPEED_PERC = .4;
 //OTHER
 var SCALE = 4;
 
-var TOT_DAY_PARTS = 4;
+var TOT_DAY_PARTS = 8;
 var EDGE_PADDING = 80;
 var EDGE_LEFT = EDGE_PADDING;
 var EDGE_RIGHT = GAME_WIDTH - EDGE_PADDING;
@@ -78,8 +75,3 @@ var BRAND = {
 var GO_TO_WORK = 0;
 var GO_TO_SHOP = 1;
 var GO_HOME = 2;
-
-var PART_MORNING_COMMUTE = 0;
-var PART_WORKING = 1;
-var PART_EVENING_COMMUTE = 2;
-var PART_NIGHT = 3;

@@ -14,6 +14,7 @@ KA.Bullet = function(game, brandId, sx, sy, fx, fy, speed){
     this.brandId = brandId;
     this.tint = KA.getTintFromBrandId(brandId);
 }
+
 KA.Bullet.prototype = Object.create(Phaser.Sprite.prototype); 
 KA.Bullet.prototype.constructor = KA.Bullet;
 
