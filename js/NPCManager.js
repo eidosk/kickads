@@ -2,17 +2,17 @@ var KA = KA || {};
 KA.NPCManager = {
     characters:[]
 }
-KA.NPCManager.addNPCs = function(game){
-    //trace("ADD NPCS!");
-    //this.characters.push(new KA.NPC(game, "girl"));
-    //this.characters.push(new KA.NPC(game, "old_man"));
-    //this.characters.push(new KA.NPC(game, "cool_guy"));
-    var char1 = new KA.NPC(game, "business_man", TEMP_CHAR_1_START_X, WORK_X, GO_TO_WORK);
+KA.NPCManager.addNPCs = function(game, json){
+    var house1x = json.layers[1].objects[0].x;
+    var officex = json.layers[1].objects[1].x;
+    var house2x = json.layers[1].objects[3].x;
+    
+    var char1 = new KA.NPC(game, "business_man", house1x, officex, GO_TO_WORK);
     this.characters.push(char1);
     
-    var char2 = new KA.NPC(game, "business_woman", TEMP_CHAR_2_START_X, WORK_X, GO_TO_WORK);
+    var char2 = new KA.NPC(game, "business_woman", house2x, officex, GO_TO_WORK);
     this.characters.push(char2);
-    
+        
     
     //this.characters.push(new KA.NPC(game, "business_woman_zombie"));
 }
@@ -31,27 +31,43 @@ KA.NPCManager.checkCollision = function(x, y, brandId){
     var match = false;
     for(i=0; i<this.characters.length; i++){
         var char = this.characters[i];
-        if(KA.Collision.hitTestPoint(char.body,x,y, true)){
-            match = true;
-            char.onCollision(brandId);
+        if(char.visible){
+            if(KA.Collision.hitTestPoint(char.body,x,y, true)){
+                match = true;
+                char.onCollision(brandId);
+                break;
+            }
         }
-        if(match)break;
     }
     return match;
 }
 
-KA.NPCManager.goHomeAfterWork = function(){
-    var char1 = new KA.NPC(game, "business_man", WORK_X,TEMP_CHAR_1_START_X, GO_HOME);
-    var char2 = new KA.NPC(game, "business_woman", WORK_X, TEMP_CHAR_2_START_X, GO_HOME)
-    this.characters.push(char1);
-    this.characters.push(char2);
+KA.NPCManager.everybodyGoHomeAfterWork = function(){
+    for(i=0; i<this.characters.length; i++){
+        var char = this.characters[i];
+        char.goHomeAfterWork();
+    }
+    
 }
+
 
 KA.NPCManager.isEverybodyWorking = function(){
     var result = true;
     for(i=0; i<this.characters.length; i++){
         var char = this.characters[i];
         if(!char.isWorking()){
+            result = false;
+            break;
+        }
+    }
+    return result;
+}
+
+KA.NPCManager.isEverybodyHome = function(){
+    var result = true;
+    for(i=0; i<this.characters.length; i++){
+        var char = this.characters[i];
+        if(!char.isAtHome()){
             result = false;
             break;
         }
@@ -71,10 +87,10 @@ KA.NPCManager.isEverybodyZombie = function(){
     return result;
 }
 
-KA.NPCManager.isPlayerNear = function(){
+KA.NPCManager.isPlayerNearAnybody = function(){
     var result = false;
     for(i=0; i<this.characters.length; i++){
-        //trace("loop");
+        ////trace("loop");
         var char = this.characters[i];
         if(char.isNearPlayer(KA.player)){
             result = true;

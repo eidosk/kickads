@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="right-down" width="107" height="30" tilewidth="12" tileheight="12" nextobjectid="1">
  <tileset firstgid="1" name="groundTile" tilewidth="12" tileheight="12" tilecount="1" columns="1">
-  <image source="groundTile.png" trans="22ff29" width="12" height="12"/>
+  <image source="../images/tiles/ground.png" trans="22ff29" width="12" height="12"/>
  </tileset>
  <imagelayer name="bgLayer">
-  <image source="../../../../../../../Applications/MAMP/htdocs/adkiller/images/bg.png"/>
+  <image source="../images/bg.png" width="1280" height="360"/>
  </imagelayer>
  <layer name="groundLayer" width="107" height="30">
   <data encoding="csv">

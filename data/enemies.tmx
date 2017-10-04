@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="right-down" width="107" height="30" tilewidth="12" tileheight="12" nextobjectid="20">
  <tileset firstgid="1" name="banner_temp" tilewidth="12" tileheight="12" tilecount="10" columns="2">
-  <image source="enemies/banner_temp.png" width="24" height="60"/>
+  <image source="../images/enemies/banner_ph.png" width="24" height="60"/>
  </tileset>
  <tileset firstgid="11" name="billboard_temp" tilewidth="12" tileheight="12" tilecount="50" columns="10">
-  <image source="enemies/billboard_temp.png" width="120" height="60"/>
+  <image source="../images/enemies/billboard_ph.png" width="120" height="60"/>
  </tileset>
  <tileset firstgid="61" name="square_temp" tilewidth="12" tileheight="12" tilecount="9" columns="3">
-  <image source="enemies/square_temp.png" width="36" height="36"/>
+  <image source="../images/enemies/square_ph.png" width="36" height="36"/>
  </tileset>
  <imagelayer name="bgLayer">
-  <image source="bg.png" width="1280" height="360"/>
+  <image source="../images/bg.png" width="1280" height="360"/>
  </imagelayer>
  <layer name="adLayer" width="107" height="30">
   <data encoding="csv">
@@ -46,5 +46,4 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="objectLayer"/>
 </map>

@@ -21,8 +21,8 @@ var actionButton;
 var splatButton;
 var infoButton;
 var state;
-KA.Player = function(game, name){
-    Phaser.Sprite.call(this, game, 32, 300, name);
+KA.Player = function(game, name, x, y){
+    Phaser.Sprite.call(this, game, x, y, name);
     game.add.existing(this);
     this.anchor.setTo(0.5, 0);
     game.physics.enable(this, Phaser.Physics.ARCADE);
@@ -115,7 +115,7 @@ KA.Player.prototype.isKicking = function(){
     return state==KICK || state==KICK_AIR;
 }
 KA.Player.prototype.onRunAnimComplete = function(){
-    ////trace("AIR!");
+    //////trace("AIR!");
     needsAir = true;
     runCounter = 0;
     this.playAnim(RUN_BREATHE);
@@ -147,7 +147,7 @@ KA.Player.prototype.restoreTint = function(){
 }
 
 KA.Player.prototype.update = function(){
-    ////trace("x: " + this.x);
+    //////trace("x: " + this.x);
     if(state==SPLAT || state==LAND_HARD)return; //must wait for end of land hard or splate animations
     if(jumpingDown){
         jumpDownCounter++;
@@ -207,7 +207,7 @@ KA.Player.prototype.update = function(){
             this.splat();
         }
         if(infoButton.isDown){
-            trace("x: " + this.x);
+            //trace("x: " + this.x);
         }
     }else{
         if(this.isRunning()){
@@ -233,7 +233,7 @@ KA.Player.prototype.doAction = function(){
 }
 
 KA.Player.prototype.canKick = function(){
-    if(KA.NPCManager.isPlayerNear())return false;
+    if(KA.NPCManager.isPlayerNearAnybody())return false;
     else return true;
 }
 

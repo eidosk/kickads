@@ -11,7 +11,6 @@ KA.Emitter = function(game, x, y, health, name){
     /*this.emitTimer = game.time.create(false);
     this.timerLoop = this.emitTimer.loop(KA.Emitter.LOOP_TIME, this.emit, this);    
     this.emitTimer.start();*/
-    
     this.emitTimer = game.time.create(false);
     this.emitTimer.loop(KA.Emitter.LOOP_TIME, this.emit, this);
     this.emitTimer.start();
@@ -105,8 +104,10 @@ KA.Emitter.prototype.checkTarget = function(target){
 KA.Emitter.prototype.shootTarget = function(target, x,y){
     if(KA.Emitter.EMIT_TYPE==0)new KA.Bullet(KA.game, this.brandId, this.x, this.y, x, y, BULLET_SPEED);
     else if(KA.Emitter.EMIT_TYPE==1){
-        this.shootRay(x,y);
-        target.onCollision(0);
+        if(target.canBeShot()){
+            this.shootRay(x,y);
+            target.onCollision(0);
+        }
     }
 }
 KA.Emitter.prototype.shootRay = function(x,y){

@@ -7,7 +7,8 @@ KA.Enemy = function(game, x, y, name){
     this.name = name;
 }
 
-KA.Enemy.prototype = Object.create(Phaser.Sprite.prototype); 
+KA.Enemy.prototype = Object.create(Phaser.Sprite.prototype);
+
 KA.Enemy.prototype.constructor = KA.Bullet;
 
 /* CONSTANTS */

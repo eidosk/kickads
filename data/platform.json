@@ -1,7 +1,7 @@
 { "height":30,
  "layers":[
         {
-         "image":"bg.png",
+         "image":"..\/images\/bg.png",
          "name":"Background",
          "opacity":1,
          "type":"imagelayer",
@@ -29,25 +29,11 @@
         {
          "columns":1,
          "firstgid":1,
-         "image":"platformTile.png",
+         "image":"..\/images\/tiles\/platform.png",
          "imageheight":12,
          "imagewidth":12,
          "margin":0,
          "name":"platformTile",
-         "spacing":0,
-         "tilecount":1,
-         "tileheight":12,
-         "tilewidth":12,
-         "transparentcolor":"#22ff29"
-        }, 
-        {
-         "columns":1,
-         "firstgid":2,
-         "image":"groundTile.png",
-         "imageheight":12,
-         "imagewidth":12,
-         "margin":0,
-         "name":"groundTile",
          "spacing":0,
          "tilecount":1,
          "tileheight":12,
