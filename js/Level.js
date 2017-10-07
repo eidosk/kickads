@@ -1,18 +1,18 @@
 var KA = KA || {};
 var groundTilemap, platformTilemap, enemiesTilemap;
 var groundLayer, platformLayer, adLayer;
-var enemyManager;
+//var enemyManager;
 var player;
 var facing = 'left';
 var waiting = false;
-var bg;
-var bgFar;
-var bgSky;
+var bg, bgFar, bgSky;
 var deltaY = 5;
 var prevY = 0;
 var totAdTiles;
-var game;
 var dayPart;
+var game;
+var dayText;
+var gui;
 
 KA.Level = {init:init, preload: preload, create:create, update:update, render:render};
 
@@ -33,6 +33,7 @@ function preload(){
     game.load.tilemap('enemiesTilemap', 'data/enemies.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.json('adsInfo', 'data/enemies.json');
     game.load.json('objectsInfo', 'data/objects.json');
+    game.load.json('dialogues', 'data/dialogues.json');
     //TILES
     game.load.image('groundTile', 'images/tiles/ground.png');
     game.load.image('platformTile', 'images/tiles/platform.png');
@@ -40,11 +41,9 @@ function preload(){
     game.load.image('billboard_ph', 'images/enemies/billboard_ph.png');
     game.load.image('banner_ph', 'images/enemies/banner_ph.png');
     game.load.image('square_ph', 'images/enemies/square_ph.png');
-    
     game.load.spritesheet('billboard', 'images/enemies/billboard.png', 120, 60, 24);
     game.load.spritesheet('banner', 'images/enemies/banner.png', 24, 60, 12);
     game.load.spritesheet('square', 'images/enemies/square.png', 36, 36, 12);    
-    
     //CHARACTERS
     game.load.spritesheet('dude', 'images/hero_sprites.png', 22, 22, 90);
     //game.load.image('girl', 'images/npcs/girl.png');
@@ -76,7 +75,6 @@ function preload(){
     game.load.image("sky_cycle_7", "images/sky_cycle_7.png");
     game.load.spritesheet("influence_bubbles", "images/influence_bubbles.png",11,13, 4);
     game.load.spritesheet("bubbles", "images/bubbles.png", 12, 13, 47);
-    
     //FONT
     game.load.bitmapFont('myfont', 'fonts/font.png', 'fonts/font.fnt');
 }
@@ -102,29 +100,33 @@ function create(){
     platformTilemap.setCollision(1);
     platformLayer.alpha = HIT_AREA_ALPHA;
     enemiesTilemap = game.add.tilemap("enemiesTilemap");
-    enemyManager = new KA.EnemyManager(enemiesTilemap, game.cache.getJSON('adsInfo'));
+    //enemyManager = new KA.EnemyManager(enemiesTilemap, game.cache.getJSON('adsInfo'));
+    
+    KA.EnemyManager.init(enemiesTilemap, game.cache.getJSON('adsInfo'));
     
     var objectsInfo = game.cache.getJSON('objectsInfo');
-    
-    //enemyManager.test();
     adLayer = enemiesTilemap.createLayer('adLayer');
     enemiesTilemap.setCollision([1,2]);
-    totAdTiles = enemyManager.countTiles();
+    totAdTiles = KA.EnemyManager.countTiles();
     game.physics.arcade.gravity.y = GRAVITY;
-    KA.NPCManager.addNPCs(game, objectsInfo);
-    
+    KA.NPCManager.init(game, objectsInfo);
     var px = objectsInfo.layers[1].objects[4].x;
     var py = objectsInfo.layers[1].objects[4].y;
-    
     player = new KA.Player(this.game, 'dude', px, py);
     KA.player = player;
     game.physics.enable(platformLayer, Phaser.Physics.ARCADE);
     game.time.advancedTiming = true;
+    //
+    gui = new KA.GUI(this.game);
+    game.global.day++;
+    gui.showDayText(game.global.day);
+    KA.game.global.profit = 0;
+    //gui.showProgressBar();
     dayPart = -1;
     nextDayPart();
-    
-    
     //endDay();
+
+    
 }
 
 function nextDayPart(){
@@ -157,7 +159,7 @@ function isWaitingForNpcs(){
 }
 
 function endDay(){
-    ////trace("END OF DAY")
+    KA.EnemyManager.removeSignals();
     game.state.start("EndOfTheDay");
 }
 
@@ -193,7 +195,7 @@ function getTileX(tile){
 }
 //KA.Level.prototype.renderEmitters = function(){
 function renderEmitters(){
-    var enemies = enemyManager.getEnemies(); //optimize... render only visible... make static
+    var enemies = KA.EnemyManager.getEnemies(); //optimize... render only visible... make static
     for(i=0; i<enemies.length; i++){
         for(j=0; j<enemies[i].length; j++){
             var tEnemy = enemies[i][j];

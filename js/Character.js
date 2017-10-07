@@ -7,7 +7,8 @@ KA.Character = function(game, name){
     this.popUp = null; // pop up is a text message on the character (ex: press x to interact)
     this.timerEvent = null;
 }
-KA.Character.prototype = Object.create(Phaser.Sprite.prototype); 
+KA.Character.prototype = Object.create(Phaser.Sprite.prototype);
+
 KA.Character.prototype.constructor = KA.Character;
 
 KA.Character.prototype.playAnim = function(name){
@@ -90,5 +91,6 @@ KA.Character.prototype.removeSpeechBubble = function(){
     if(this.speechBubble!=null){
         this.removeChild(this.speechBubble);
         this.speechBubble = null;
+        KA.player.endAction();
     }
 }

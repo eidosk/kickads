@@ -3,35 +3,28 @@ var KA = KA || {};
 var needsAir = false;
 var jumpingDown = false;
 //NUMBERS
-var kickCounter = 0;
-var runCounter = 0;
-var jumpDownCounter = 0;
+var kickCounter = 0, runCounter = 0, jumpDownCounter = 0;
 var maxYSpeed = 0;
 //STRINGS
 var STAND = "stand", STOP = "stop", WIND = "wind", RUN = "run", RUN_BREATHE = "run_breathe", JUMP = "jump", LAND = "land", LAND_HARD = "land_hard", KICK = "kick", KICK_AIR = "kick_air",CROUCH = "crouch", SPLAT = "splat";
 //OBJECTS
-var kickAnim;
-var runAnim;
-var kickAirAnim;
-var landHardAnim;
-var splatAnim;
-var cursors;
-var jumpButton;
-var actionButton;
-var splatButton;
-var infoButton;
 var state;
+var cursors;
+var kickAnim, runAnim, kickAirAnim, landHardAnim, splatAnim;
+var jumpButton, actionButton, splatButton, infoButton;
+
+
+
 KA.Player = function(game, name, x, y){
     Phaser.Sprite.call(this, game, x, y, name);
     game.add.existing(this);
     this.anchor.setTo(0.5, 0);
     game.physics.enable(this, Phaser.Physics.ARCADE);
     this.addAnimations();
-    this.body.checkCollision.up = false;
-    this.body.checkCollision.left = false;
-    this.body.checkCollision.right = false;
+    this.body.checkCollision.up = false, this.body.checkCollision.left = false, this.body.checkCollision.right = false;
     this.body.setSize(8, 20, 6, 2); //adjust collision box
     this.body.collideWorldBounds = true;
+    this.acting = false;
     game.camera.follow(this);
     cursors = game.input.keyboard.createCursorKeys();
     jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.Z);
@@ -106,7 +99,6 @@ KA.Player.prototype.run = function(){
     else this.playAnim(RUN);
 }
 
-
 KA.Player.prototype.isRunning = function(){
     return state==RUN || state==RUN_BREATHE;
 }
@@ -114,6 +106,7 @@ KA.Player.prototype.isRunning = function(){
 KA.Player.prototype.isKicking = function(){
     return state==KICK || state==KICK_AIR;
 }
+
 KA.Player.prototype.onRunAnimComplete = function(){
     //////trace("AIR!");
     needsAir = true;
@@ -131,11 +124,11 @@ KA.Player.prototype.onKickAnimComplete = function(){
 KA.Player.prototype.isOnTheFloor = function(){
     return this.y > 320 && this.y < 330;
 }
+
 KA.Player.prototype.jumpDown = function(){
     jumpingDown = true;
     this.playAnim(JUMP);
 }
-
 
 KA.Player.prototype.tempTint = function(tint){
     this.tint = tint;
@@ -147,7 +140,6 @@ KA.Player.prototype.restoreTint = function(){
 }
 
 KA.Player.prototype.update = function(){
-    //////trace("x: " + this.x);
     if(state==SPLAT || state==LAND_HARD)return; //must wait for end of land hard or splate animations
     if(jumpingDown){
         jumpDownCounter++;
@@ -215,9 +207,7 @@ KA.Player.prototype.update = function(){
         }
     }
     if(actionButton.isDown && !this.isKicking()){
-        //this.kick();
         this.doAction();
-        
     }else if (actionButton.isUp && this.isKicking()){
         if(state==JUMP)this.playAnim(JUMP);
         else if (this.isRunning()) this.run();
@@ -228,18 +218,27 @@ KA.Player.prototype.update = function(){
 }
 
 KA.Player.prototype.doAction = function(){
-    Signals.doAction.dispatch(this);
+    if(this.canAct()){
+        Signals.doAction.dispatch(this);
+        this.acting = true;
+    }
     if(this.canKick())this.kick();
 }
+
+KA.Player.prototype.canAct = function(){
+    return !this.acting;
+}
+
+KA.Player.prototype.endAction = function(){
+    this.acting = false;
+}
+
+
 
 KA.Player.prototype.canKick = function(){
     if(KA.NPCManager.isPlayerNearAnybody())return false;
     else return true;
 }
-
-
-
-
 
 KA.Player.prototype.kick = function(){
     Signals.kick.dispatch(this);
@@ -252,4 +251,3 @@ KA.Player.prototype.kick = function(){
     }
     this.body.velocity.x = ATTACK_SPEED * this.scale.x;
 }
-

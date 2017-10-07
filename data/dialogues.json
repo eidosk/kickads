@@ -1,0 +1,45 @@
+{
+    "player":[],
+    "npcs": {
+        "goingToWork":[
+            "I am going to work",
+            "Sorry, I am busy",
+            "I am late!"
+        ],
+        "goingHome":[
+            "I am going home.",
+            "Sorry, I am tired",
+            "My family is waiting for me!"
+        ],
+        "influenced":[
+            [
+                [
+                    "I am getting thirsty.",
+                    "I might get a drink..."
+                ],
+                [
+                    "I am thirsty!",
+                    "I need a soda."
+                ], 
+                [
+                    "Where can I get a Soda around here?",
+                    "Give me a soda!"
+                ], 
+                [
+                    "Aghhh!",
+                    "Get...out...of...my...way"
+                ]
+            ],
+            [
+                
+            ],
+            [
+                
+            ],
+            [
+                
+            ]
+        ]
+
+    }
+}

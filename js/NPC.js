@@ -1,19 +1,16 @@
 var KA = KA || {};
 
 /*CONSTRUCTOR*/
-
 KA.NPC = function(game, name, x, fx, mission){
     //if (typeof(direction)==='undefined') direction = 1;
     this.name = name;
     Phaser.Sprite.call(this, game, x, 0, name);
     game.add.existing(this);
     this.startX = x;
-    this.zombie = false;
-    this.stunned = false;
-    this.immune = false; //can be immune after shopping, until the end of the day, or when 100% aware
+    this.zombie = false, this.stunned = false, this.immune = false; //can be immune after shopping, until the end of the day, or when 100% aware
     this.missionId = -1;
     this.prevMissionId = -1;
-    this.missionX = fx;
+    this.missionX = this.workX = fx;
     this.state = KA.NPC.IDLE;
     this.setMission(mission);
     this.animations.add('idle', [0], 5, false);
@@ -23,11 +20,8 @@ KA.NPC = function(game, name, x, fx, mission){
     this.animations.play("walk");
     this.y = FLOOR_Y - this.height;
     this.speedPerc = NPC_SPEED_PERC;
-    this.tempRandSentence = this.getRandomSentence();
-    //this.setRandomDirection();
     this.setAnchor();
-    this.thoughtBubble = null; //thought about the product
-    this.bubbles = null;   // influence bubbles
+    this.thoughtBubble = null, this.bubbles = null;   // influence bubbles
     this.thoughtBubble = this.game.make.sprite(11, 13,'influence_bubbles');
     this.bubbles = this.game.make.sprite(12, 13,'bubbles');
     this.bubbles.animations.add('bubble_low', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12, 12, 12, 12], 8, true);
@@ -35,26 +29,25 @@ KA.NPC = function(game, name, x, fx, mission){
     this.bubbles.animations.add('bubble_high', [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46], 8, true);
     this.body = this.addChild(this.createBody());
     this.brandInfluence = [0,0,0,0];
-    //Signals.kick.add(this.onKick, this);
+    this.dialogues = game.cache.getJSON('dialogues').npcs;
     Signals.doAction.add(this.onAction, this);
-    //this.showBubbles();
 };
+
 KA.NPC.prototype = Object.create(KA.Character.prototype); 
 KA.NPC.prototype.constructor = KA.NPC;
-
 /*CONSTANTS*/
-
-KA.NPC.IDLE = "idle";
-KA.NPC.WORKING = "working";
-KA.NPC.SHOPPING = "shopping";
-KA.NPC.AT_HOME = "at home";
-
+KA.NPC.IDLE = "idle", KA.NPC.WORKING = "working", KA.NPC.SHOPPING = "shopping", KA.NPC.AT_HOME = "at home";
 /*FUNCTIONS*/
+KA.NPC.prototype.override_showPopUp = function(){
+    if(!this.isSpeaking()){
+        this.speak(this.brandInfluence[0], -16, false);
+        this.popUp = true;
+    }
+}
 
 KA.NPC.prototype.createBody = function(){
     var body = game.make.sprite(-5, 10, 'pixel');
-    body.width = 14;
-    body.height = 20;
+    body.width = 14, body.height = 20;
     body.alpha = HIT_AREA_ALPHA;
     return body;
 }
@@ -70,7 +63,7 @@ KA.NPC.prototype.face = function(x){
 }
 
 KA.NPC.prototype.influence = function(brandId){
-    
+    trace("brandId: " + brandId);
     this.brandInfluence[brandId] += HIT_DAMAGE;
     
     //trace("brandInfluence: "  + this.brandInfluence[brandId]);
@@ -151,10 +144,10 @@ KA.NPC.prototype.setMission = function(id){
     
     switch(id){
         case GO_TO_SHOP:
-            this.missionX = SHOP_X;
+            this.missionX = KA.game.global.shopX;
         break;
         case GO_TO_WORK:
-            this.missionX = WORK_X;
+            this.missionX = this.workX;
         break;
         case GO_HOME:
             this.missionX = this.startX;
@@ -169,6 +162,8 @@ KA.NPC.prototype.missionComplete = function(){
     switch(this.missionId){
         case GO_TO_SHOP:
             this.state = KA.NPC.SHOPPING;
+            KA.game.global.profit++;
+            trace("KA.game.global.profit: " + KA.game.global.profit);
             this.game.time.events.add(8000, this.endShopping, this);
         break;
         case GO_TO_WORK:
@@ -220,8 +215,6 @@ KA.NPC.prototype.goHomeAfterWork = function(){
     this.reappear();
 }
 
-
-
 KA.NPC.prototype.zombify = function(brandId){
     this.zombie = true;
     //this.playAnim("walk_zombie");
@@ -240,8 +233,7 @@ KA.NPC.prototype.isZombie = function(){
 
 KA.NPC.prototype.onAction = function(player) {
     if(this.isNearPlayer(player)){
-        ////trace("111");
-        this.speak(this.tempRandSentence);
+        this.speak(this.getRandomSentence());
     }
 }
 
@@ -250,35 +242,29 @@ KA.NPC.prototype.isNearPlayer = function(player){
 }
 
 KA.NPC.prototype.getRandomSentence = function(){
-    var arr = [];
-    /*
-    arr.push("Take This!");
-    arr.push("In your face!");
-    arr.push("That will teach you!");
-    arr.push("Give me your bubblegums!");
-    arr.push("Wrong way!");
-    arr.push("Where are you going?");
-    arr.push("Who are you?");
-    arr.push("I don't like you.");
-    arr.push("I am kicking your ass");
-    arr.push("Silly person!");
-    */
-    arr.push("I am going to work");
-    arr.push("Sorry, I am busy");
-    arr.push("I am late!");
-    arr.push("Get out of my way!");
-    arr.push("I have no time for you");
-    arr.push("You are a weirdo");
-    return arr[Math.floor(Math.random()*arr.length)]
+    var arr = this.getDialoguesArray();
+    return arr[Math.floor(Math.random()*arr.length)];
 }
 
-KA.NPC.prototype.getRandomSentenceNPC = function(){
+KA.NPC.prototype.getDialoguesArray = function(){
     var arr = [];
-    arr.push("Ouch!");
-    arr.push("Hey!");
-    arr.push("You are killing me!");
-    arr.push("That hurts!");
-    return arr[Math.floor(Math.random()*arr.length)]
+    var brand = 0; //temp
+    var influence = this.brandInfluence[brand]; //temp, only one brand
+    
+    if(influence<25){
+        if(this.missionId==GO_TO_WORK) arr = this.dialogues.goingToWork;
+        else arr = this.dialogues.goingHome;
+    }else if (influence>=25 && influence<50){
+        arr = this.dialogues.influenced[brand][0];
+    }else if (influence>=50 && influence<75){
+        arr = this.dialogues.influenced[brand][1];
+    }else if (influence>=75 && influence<100){
+        arr = this.dialogues.influenced[brand][2];
+    }else if (influence>=100){
+        arr = this.dialogues.influenced[brand][3];
+    }
+    
+    return arr;
 }
 
 KA.NPC.prototype.update = function(){
@@ -303,8 +289,6 @@ KA.NPC.prototype.isWorking = function(){
 KA.NPC.prototype.isAtHome = function(){
     return this.state == KA.NPC.AT_HOME;
 }
-
-
 
 KA.NPC.prototype.setRandomDirection = function(){
     //////trace(Math.random());

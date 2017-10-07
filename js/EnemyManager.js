@@ -1,10 +1,28 @@
 var KA = KA || {};
-KA.EnemyManager = function(tilemap, jsonInfo){
+
+/*
+TOT value: 765
+Banner: 18
+Billboards: 9
+Squares: 15
+Banner Value: 10
+Billboards Value: 50
+Squares Value: 9
+*/
+
+KA.EnemyManager = {
+    //characters:[]
+}
+
+KA.EnemyManager.init = function(tilemap, jsonInfo){
     this.tilemap = tilemap;
     this.info = jsonInfo;
-    this.enemyNames = ["banner","billboard","square"];
-    this.balance = TEMP_BALANCE; //temp, only one brand
+    this.enemyNames = ["banner","billboard","square"]; //temp, should be dynamic
+    this.balance = KA.game.global.balance; //temp, only one brand 
     this.totAdTypes = this.info.tilesets.length;
+    this.totAdsArr = [0,0,0];
+    this.resultAdsArr = [0,0,0];
+    this.totValue = 0;
     ////trace("There are " + this.totAdTypes + " types of ads");
     this.enemies = new Array(this.totAdTypes); //will be a 2d array
     this.replaceTiles();
@@ -12,16 +30,15 @@ KA.EnemyManager = function(tilemap, jsonInfo){
     this.showEnemies();
     //this.removeAllEnemiesExceptShown();
 }
-
-KA.EnemyManager.constructor = KA.EnemyManager;
-
+//KA.EnemyManager.constructor = KA.EnemyManager;
 /* Replaces Tiled Enemies with Enemy Spritesheet and removes tiles of enemies */
-KA.EnemyManager.prototype.replaceTiles = function(){
+KA.EnemyManager.replaceTiles = function(){
     for(i = 0; i < this.totAdTypes; i++){ // types of ads loop
         var tSet = this.info.tilesets[i];
         var firstTileArr = this.getEnemyFirstTileArray(tSet.firstgid);
         var count = firstTileArr.length;
-        ////trace("Ad " + i + " is called " + tSet.name + ", it has ID: " + tSet.firstgid + " and there are " + count + " ads of this type on screen");
+        //trace("Ad " + i + " is called " + tSet.name + ", it has ID: " + tSet.firstgid + " and there are " + count + " ads of this type on screen");
+        this.totAdsArr[i] = count;
         this.tilemap.addTilesetImage(tSet.name, tSet.name);
         this.enemies[i] = new Array(count);
         for(j = 0; j<count; j++){ // ads of each type loop
@@ -30,63 +47,84 @@ KA.EnemyManager.prototype.replaceTiles = function(){
             var tHeight = tSet.tilecount/tSet.columns;
             var tiles = this.tilemap.copy(firstTile.x, firstTile.y, tWidth, tHeight); //get tiles*-
             this.enemies[i][j] = new KA.Enemy(KA.game, firstTile.x * TILE_WIDTH, firstTile.y * TILE_WIDTH, this.enemyNames[i]);
+            this.totValue += this.enemies[i][j].value;
             this.removeTiles(tiles);
         }
     }
+    KA.game.global.totValue = this.totValue;
 }
 /* Finds how many ads are needed for each type depending on the brand balance. Inits and shows those number of ads, choosing randomly */
-KA.EnemyManager.prototype.showEnemies = function(){
-    //var banner = game.make.sprite(0,0,"banner");
-    //var billboard = game.make.sprite(0,0,"billboard");
-    //var square = game.make.sprite(0,0,"square");
-    var healthArr = [10, 50, 9];  //banner, billboard, square
-    var result = [0, 0, 0];
-    var sum = 0;
-    var counter = 2;
-    while(sum <= this.balance){
-        var currentIdx = counter % 3;
-        sum += healthArr[currentIdx];
-        if(sum <= this.balance){
-            result[currentIdx]++;
-        }
+KA.EnemyManager.showEnemies = function(){    
+    var enemiesClone = ArrayUtils.clone2d(this.enemies);
+    var counter = 1;
+
+    while(true){
         counter++;
-    }
-    //result array now contains how many ads I need for each type
-    for(i=0; i<3; i++){
-        var arr = ArrayUtils.clone(this.enemies[i]);
-        var count = result[i]; //how many ads
-        for(j=0; j<count; j++){
-            var randNum = Math.floor(Math.random() * arr.length);
-            this.enemies[i][randNum].init(); //will be shown!
-            ArrayUtils.removeItem(arr, randNum);
+        var i = counter % 3; // 2 -> 0 -> 1 -> 2 -> 0 -> 1...etc
+        //trace("i: " + i);
+        if(enemiesClone[0].length==0 && enemiesClone[1].length==0 && enemiesClone[2].length==0){ //if all full
+            trace("break 1");
+            break;
+        }else if(enemiesClone[i].length==0){ //if one type full
+            //trace("one type FULL!" + i);
+            continue;   
+        }
+        var randNum = Math.floor(Math.random() * enemiesClone[i].length);
+      /*  trace("rand: " + randNum);
+        trace("enemiesClone[i].length: " + enemiesClone[i].length);
+        trace("this.balance: " + this.balance);
+       */
+        var currEnemy = enemiesClone[i][randNum];
+         //trace("currEnemy.value: " + currEnemy.value);
+        if(this.balance >= currEnemy.value){
+            ArrayUtils.removeItem(enemiesClone[i], randNum);
+            currEnemy.init();//show enemy!!
+            this.balance-=currEnemy.value;
+        }else{
+            if(i==1){
+                continue;
+                //trace("continue! @");
+            }else{
+                trace("break 2");
+                break;
+                
+            }
         }
     }
-}
-
-/*
-KA.EnemyManager.prototype.removeAllEnemiesExceptShown = function(){
-    for(i=0; i<this.totAdTypes; i++){
-        var count = this.enemies[i].length;
-        for(j=0; j<count; j++){
-            var enemy = this.enemies[i][j];
-            if(!enemy.shown)enemy.doDestroy();
-        }
+    
+    trace("this.balance: " + this.balance);
+    trace("enemiesClone[0].length: " + enemiesClone[0].length);
+    trace("enemiesClone[1].length: " + enemiesClone[1].length);
+    trace("enemiesClone[2].length: " + enemiesClone[2].length);
+    
+    /* 
+    for(i=0; i<){
+        
     }
+    */
+    
 }
-*/
 
-KA.EnemyManager.prototype.removeTiles = function(tiles){    
+KA.EnemyManager.canBuy = function(){
+    return this.balance>0 && this.areThereAdPlacesAvailable();
+}
+
+KA.EnemyManager.areThereAdPlacesAvailable = function(){
+    return this.resultAdsArr != this.totAdsArr;
+}
+
+KA.EnemyManager.removeTiles = function(tiles){    
     for(var i=0; i<tiles.length; i++){
         var tile = tiles[i];
         this.tilemap.removeTile(tile.x, tile.y);
     }
 }
 
-KA.EnemyManager.prototype.getEnemies = function(){
+KA.EnemyManager.getEnemies = function(){
     return this.enemies;
 }
 
-KA.EnemyManager.prototype.countEnemies = function(){
+KA.EnemyManager.countEnemies = function(){
     var count = 0;
     for(i=0; i<this.enemies.length; i++){
         for(j=0; j<this.enemies[i].length; j++){
@@ -96,7 +134,7 @@ KA.EnemyManager.prototype.countEnemies = function(){
     return count;
 }
 
-KA.EnemyManager.prototype.removeEnemyFromArr = function(enemy){
+KA.EnemyManager.removeEnemyFromArr = function(enemy){
     for(i = 0; i<this.enemies.length; i++){
         for(j=0; j<this.enemies[i].length; j++){
             var tEnemy = this.enemies[i][j];
@@ -109,7 +147,7 @@ KA.EnemyManager.prototype.removeEnemyFromArr = function(enemy){
     ////trace("now tot enemies: " + this.countEnemies());
 }
 
-KA.EnemyManager.prototype.countTiles = function(){
+KA.EnemyManager.countTiles = function(){
     var count = 0;
     for(c=0; c<this.tilemap.width; c++){
         for(r=0; r<this.tilemap.height; r++){
@@ -120,7 +158,7 @@ KA.EnemyManager.prototype.countTiles = function(){
     return count;
 }
 
-KA.EnemyManager.prototype.getEnemyFirstTileArray = function(id){
+KA.EnemyManager.getEnemyFirstTileArray = function(id){
     ////trace("id: " + id);
     //EnemyManager
     tArray = [];
@@ -131,4 +169,13 @@ KA.EnemyManager.prototype.getEnemyFirstTileArray = function(id){
         i++;
     }
     return tArray;
+}
+
+KA.EnemyManager.removeSignals = function(){
+    for(i=0; i<this.enemies.length; i++){
+        for(j=0; j<this.enemies[i].length; j++){
+            var tEnemy = this.enemies[i][j];
+            tEnemy.removeKickSignal();
+        }
+    }
 }

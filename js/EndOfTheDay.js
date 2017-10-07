@@ -24,14 +24,24 @@ function create(){
     
     
     
+    
     //game.time.events.add(1000, pressAnyKey, this);
 }
 
 function animationComplete(sprite, animation) {
     trace("complete");
+    
+    
+    var txt = "";
+    if(KA.game.global.profit>0){
+        txt = "Soda sales are rising!";
+    }else{
+        txt = "Not many sodas sold today!";
+    }
+    
     newspaper_anim.destroy();
     game.add.sprite(0,0, "newspaper");
-    bmpText = game.add.bitmapText(24, 40, 'myfont','Shit happened today. \n Press any key to go to tomorrow.', 16);
+    bmpText = game.add.bitmapText(24, 40, 'myfont',txt, 16);
     bmpText.tint = 0x223344;
     onKeyDown();
 }
