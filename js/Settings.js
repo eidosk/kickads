@@ -1,9 +1,10 @@
 var KA = KA || {};
 //GAMEPLAY
-var HIT_DAMAGE = 10;
+var HIT_DAMAGE = [10,8,6,4];
 //ALPHA
 var HIT_AREA_ALPHA = 0;
 var BULLET_ALPHA = 1;
+var RAYS_ALPHA = 0;
 var START_STATE = "Level";
 //BOOL
 var DEBUG_MODE = false;
@@ -16,15 +17,16 @@ var WORLD_HEIGHT = 360;
 var EMITTER_RADIUS = 100;
 var TILE_WIDTH = 12;
 var FLOOR_Y = WORLD_HEIGHT - 12;
+var POP_UP_Y = -12;
 //PHYSICS
-var DAY_PART_DURATION = 1000; //ms
+var DAY_PART_DURATION = 5000; //ms
 var ATTACK_SPEED = 120;
 var BULLET_SPEED = 100;
 var RUN_SPEED = 100;
 var JUMP_SPEED = 150;
 var SPEED_X = .3;
 var GRAVITY = 400;
-var NPC_SPEED_PERC = .6;
+var NPC_SPEED_PERC = .4;
 //OTHER
 var SCALE = 4;
 var TOT_DAY_PARTS = 8;

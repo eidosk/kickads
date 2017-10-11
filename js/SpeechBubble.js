@@ -42,6 +42,7 @@ KA.SpeechBubble = function(game, msg, character, y){
 }
 KA.SpeechBubble.prototype = Object.create(Phaser.Group.prototype);
 KA.SpeechBubble.prototype.constructor = KA.SpeechBubble;
+/*FUNCTIONS*/
 KA.SpeechBubble.prototype.flipText = function(){
     this.scale.setTo(this.scale.x * -1, 1);
     this.center();

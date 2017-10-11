@@ -13,6 +13,5 @@ function create(){
     bmpText = game.add.bitmapText(10, 10, 'myfont','Well Done!', 16);
     game.time.events.add(1000, pressAnyKey, this);
 }
-
 function update(){}
 function render(){}

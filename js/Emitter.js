@@ -19,13 +19,11 @@ KA.Emitter = function(game, x, y, health, name){
 }
 KA.Emitter.constructor = KA.Emitter;
 KA.Emitter.prototype = Object.create(Phaser.Sprite.prototype);
-
 /* CONSTANTS */
 KA.Emitter.RADIUS = 100;
 KA.Emitter.LOOP_TIME = 4000;
 KA.Emitter.DETECTION_TYPE = 1;  //0 is circle, 1 is x
 KA.Emitter.EMIT_TYPE = 1; //0 is bullet, 1 is ray
-
 /* FUNCTIONS */
 KA.Emitter.isCircleDetectionType = function(){
     return KA.Emitter.DETECTION_TYPE==0;
@@ -113,9 +111,9 @@ KA.Emitter.prototype.shootTarget = function(target, x,y){
 KA.Emitter.prototype.shootRay = function(x,y){
     if(this.graphics) this.graphics.destroy();
     this.graphics = this.game.add.graphics(this.x, this.y);
-    this.graphics.lineStyle(1, TINT_SODA, .5);
+    this.graphics.lineStyle(1, TINT_SODA, RAYS_ALPHA);
     this.graphics.lineTo(x - this.x, y - this.y);
-    this.graphics.beginFill(TINT_SODA, .5);
+    this.graphics.beginFill(TINT_SODA, RAYS_ALPHA);
     this.game.time.events.add(200, this.destroyGraphics, this);
 }
 KA.Emitter.prototype.destroyGraphics = function(){

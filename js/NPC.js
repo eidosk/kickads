@@ -1,4 +1,5 @@
 var KA = KA || {};
+var KA = KA || {};
 
 /*CONSTRUCTOR*/
 KA.NPC = function(game, name, x, fx, mission){
@@ -28,22 +29,59 @@ KA.NPC = function(game, name, x, fx, mission){
     this.bubbles.animations.add('bubble_mid', [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 29, 29], 8, true);
     this.bubbles.animations.add('bubble_high', [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46], 8, true);
     this.body = this.addChild(this.createBody());
-    this.brandInfluence = [0,0,0,0];
     this.dialogues = game.cache.getJSON('dialogues').npcs;
     Signals.doAction.add(this.onAction, this);
 };
-
 KA.NPC.prototype = Object.create(KA.Character.prototype); 
 KA.NPC.prototype.constructor = KA.NPC;
+
 /*CONSTANTS*/
 KA.NPC.IDLE = "idle", KA.NPC.WORKING = "working", KA.NPC.SHOPPING = "shopping", KA.NPC.AT_HOME = "at home";
+
 /*FUNCTIONS*/
-KA.NPC.prototype.override_showPopUp = function(){
+
+KA.NPC.prototype.addBars = function(){
+    this.awarenessBar = new KA.ProgressBar(this.game, 14 , 3 , this.awareness / 100, 0x00bb00);
+    this.addChild(this.awarenessBar);
+    this.awarenessBar.x = -7;
+    this.awarenessBar.y = -16;
+    this.influenceBar = new KA.ProgressBar(this.game, 14 , 3 , this.brandInfluence[0] / 100, 0xFF3300);
+    this.addChild(this.influenceBar);
+    this.influenceBar.x = -7;
+    this.influenceBar.y = -20;
+}
+
+KA.NPC.prototype.updateInfluenceBar = function(){
+    this.influenceBar.updateProgress(this.brandInfluence[0] / 100);
+}
+
+KA.NPC.prototype.updateAwarenessBar = function(){
+    this.awarenessBar.updateProgress(this.awareness / 100);
+}
+
+KA.NPC.prototype.increaseAwareness = function(){
+    this.awareness += 5;
+    if(this.awareness>=100){
+        this.awareness=100;
+        this.immune = true;
+    }
+}
+
+KA.NPC.prototype.loseAwareness = function(){
+    this.awareness -- ;
+    if(this.awareness<=0)this.awareness=0;
+}
+
+
+
+
+
+/*KA.NPC.prototype.override_showPopUp = function(){
     if(!this.isSpeaking()){
         this.speak(this.brandInfluence[0], -16, false);
         this.popUp = true;
     }
-}
+}*/
 
 KA.NPC.prototype.createBody = function(){
     var body = game.make.sprite(-5, 10, 'pixel');
@@ -53,7 +91,6 @@ KA.NPC.prototype.createBody = function(){
 }
 
 KA.NPC.prototype.onCollision = function(brandId){
-    ////trace("COLL!!!, " + this.isZombie);
     if(!this.isZombie())this.influence(brandId);   
 }
 
@@ -63,13 +100,12 @@ KA.NPC.prototype.face = function(x){
 }
 
 KA.NPC.prototype.influence = function(brandId){
-    trace("brandId: " + brandId);
-    this.brandInfluence[brandId] += HIT_DAMAGE;
+    this.brandInfluence[brandId] += this.getHitDamage();
+    this.loseAwareness();
     
-    //trace("brandInfluence: "  + this.brandInfluence[brandId]);
-    //trace("visible: " + this.visible);
-    
-    if(this.brandInfluence[brandId]>=25 && this.brandInfluence[brandId]<50){
+    if(this.brandInfluence[brandId]<25){
+        
+    }else if(this.brandInfluence[brandId]>=25 && this.brandInfluence[brandId]<50){
         this.showBubbles("bubble_low");
     }else if(this.brandInfluence[brandId]>=50 && this.brandInfluence[brandId]<75){
         this.showBubbles("bubble_mid");
@@ -80,12 +116,24 @@ KA.NPC.prototype.influence = function(brandId){
         this.zombify(brandId);
         this.setMission(GO_TO_SHOP);
     }
-    
+    this.updateInfluenceBar();
+    this.updateAwarenessBar();
     this.stun();
 }
 
+KA.NPC.prototype.getHitDamage = function(brandId){
+    if(this.awareness<25){
+       return HIT_DAMAGE[0];
+    }else if(this.awareness>=25 && this.awareness<50){
+        return HIT_DAMAGE[1];
+    }else if(this.awareness>=50 && this.awareness<75){
+        return HIT_DAMAGE[2];
+    }else if(this.awareness>=75){
+        return HIT_DAMAGE[3];
+    }
+}//get hit damage depending on awareness
+
 KA.NPC.prototype.stun = function(){
-    ////trace("STUN!")
     this.animations.stop();
     if(this.isZombie())this.animations.frame = 9;
     else this.animations.frame = 0;    
@@ -95,7 +143,6 @@ KA.NPC.prototype.stun = function(){
     this.thoughtBubble.y = -12;
     this.thoughtBubble.frame = 2;
     if(!this.areThereThoughtBubbles()){
-        ////trace("ADD THOUGHT!");
         this.addChild(this.thoughtBubble);
     }
     this.game.time.events.add(1000, this.recoverFromStun, this);
@@ -119,11 +166,9 @@ KA.NPC.prototype.areThereThoughtBubbles = function(){
 
 KA.NPC.prototype.showBubbles = function(name){
     if(!this.areThereBubbles())this.addChild(this.bubbles);
-    else ////trace("already exists");
-    this.bubbles.x = -this.bubbles.width * .5;
+    this.bubbles.x = 0;
     this.bubbles.y = -10;
     this.bubbles.animations.play(name);
-    ////trace("animations add!!");
 }
 
 KA.NPC.prototype.removeBubbles = function(name){
@@ -138,10 +183,6 @@ KA.NPC.prototype.setMission = function(id){
     
     this.prevMissionId = this.missionId;
     this.missionId = id;
-    
-    //trace(">>>setMission: " + this.missionId);
-    //trace(">>>prevMissionId: " + this.prevMissionId);
-    
     switch(id){
         case GO_TO_SHOP:
             this.missionX = KA.game.global.shopX;
@@ -158,12 +199,11 @@ KA.NPC.prototype.setMission = function(id){
 }
 
 KA.NPC.prototype.missionComplete = function(){
-    //trace("Mission " +this.missionId+ " is complete!");
     switch(this.missionId){
         case GO_TO_SHOP:
             this.state = KA.NPC.SHOPPING;
             KA.game.global.profit++;
-            trace("KA.game.global.profit: " + KA.game.global.profit);
+            //trace("KA.game.global.profit: " + KA.game.global.profit);
             this.game.time.events.add(8000, this.endShopping, this);
         break;
         case GO_TO_WORK:
@@ -173,14 +213,12 @@ KA.NPC.prototype.missionComplete = function(){
         case GO_HOME:
             this.state = KA.NPC.AT_HOME;
             if(KA.NPCManager.isEverybodyHome() && isWaitingForNpcs()) nextDayPart();
-            //trace("Home Sweet Home!");
         break;
     }
     this.disappear();
 }
 
 KA.NPC.prototype.disappear = function(){
-    //trace(">>>disappear");
     this.visible = false;
     this.zombie = false;
     Signals.doAction.remove(this.onAction, this);
@@ -189,7 +227,6 @@ KA.NPC.prototype.disappear = function(){
 }
 
 KA.NPC.prototype.reappear = function(){
-    //trace(">>>reappear");
     this.visible = true;
     Signals.doAction.add(this.onAction, this);
     //this.removeSpeechBubble();
@@ -205,6 +242,7 @@ KA.NPC.prototype.doRemove = function(){
 KA.NPC.prototype.endShopping = function(){
     this.setMission(this.prevMissionId);
     this.brandInfluence = [0,0,0,0];
+    this.updateInfluenceBar();
     this.immune = true; //until end of the day
     this.animations.play("walk");
     this.reappear();
@@ -221,7 +259,7 @@ KA.NPC.prototype.zombify = function(brandId){
     //this.tint = KA.getTintFromBrandId(brandId);
     /*
     if(KA.NPCManager.isEverybodyZombie()){
-        ////trace("GAME OVER!!!!!!!!!");
+        //////trace("GAME OVER!!!!!!!!!");
         gameOver();
     }
     */
@@ -232,8 +270,14 @@ KA.NPC.prototype.isZombie = function(){
 }
 
 KA.NPC.prototype.onAction = function(player) {
+    trace("on Action");
     if(this.isNearPlayer(player)){
-        this.speak(this.getRandomSentence());
+        trace("isNearPlayer");
+        this.speak(this.getRandomSentence(), POP_UP_Y);
+        if(!this.zombie){
+            this.increaseAwareness();
+            this.updateAwarenessBar();
+        }
     }
 }
 
@@ -273,7 +317,7 @@ KA.NPC.prototype.update = function(){
         if(this.isOffScreen())this.flipX();
         if(this.isNearPlayer(KA.player)){
             this.showPopUp();
-        }else if(this.popUp){
+        }else if(this.popUp && this.speechBubble != null && this.speechBubble.text.text=="..."){
             this.removePopUp();
         }
         if(this.x > this.missionX-3 && this.x < this.missionX+3){
@@ -291,7 +335,6 @@ KA.NPC.prototype.isAtHome = function(){
 }
 
 KA.NPC.prototype.setRandomDirection = function(){
-    //////trace(Math.random());
     if(Math.random()<.5)this.scale.setTo(this.scale.x * -1, 1);
     //else this.scale.setTo(this.scale.x * -1, 1);
 }

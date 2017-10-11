@@ -1,5 +1,4 @@
 var KA = KA || {};
-
 /*
 TOT value: 765
 Banner: 18
@@ -9,11 +8,7 @@ Banner Value: 10
 Billboards Value: 50
 Squares Value: 9
 */
-
-KA.EnemyManager = {
-    //characters:[]
-}
-
+KA.EnemyManager = {}
 KA.EnemyManager.init = function(tilemap, jsonInfo){
     this.tilemap = tilemap;
     this.info = jsonInfo;
@@ -23,21 +18,20 @@ KA.EnemyManager.init = function(tilemap, jsonInfo){
     this.totAdsArr = [0,0,0];
     this.resultAdsArr = [0,0,0];
     this.totValue = 0;
-    ////trace("There are " + this.totAdTypes + " types of ads");
+    //////trace("There are " + this.totAdTypes + " types of ads");
     this.enemies = new Array(this.totAdTypes); //will be a 2d array
     this.replaceTiles();
-    ////trace("tot enemies: " + this.countEnemies());
+    //////trace("tot enemies: " + this.countEnemies());
     this.showEnemies();
     //this.removeAllEnemiesExceptShown();
 }
-//KA.EnemyManager.constructor = KA.EnemyManager;
 /* Replaces Tiled Enemies with Enemy Spritesheet and removes tiles of enemies */
 KA.EnemyManager.replaceTiles = function(){
     for(i = 0; i < this.totAdTypes; i++){ // types of ads loop
         var tSet = this.info.tilesets[i];
         var firstTileArr = this.getEnemyFirstTileArray(tSet.firstgid);
         var count = firstTileArr.length;
-        //trace("Ad " + i + " is called " + tSet.name + ", it has ID: " + tSet.firstgid + " and there are " + count + " ads of this type on screen");
+        ////trace("Ad " + i + " is called " + tSet.name + ", it has ID: " + tSet.firstgid + " and there are " + count + " ads of this type on screen");
         this.totAdsArr[i] = count;
         this.tilemap.addTilesetImage(tSet.name, tSet.name);
         this.enemies[i] = new Array(count);
@@ -57,25 +51,16 @@ KA.EnemyManager.replaceTiles = function(){
 KA.EnemyManager.showEnemies = function(){    
     var enemiesClone = ArrayUtils.clone2d(this.enemies);
     var counter = 1;
-
     while(true){
         counter++;
         var i = counter % 3; // 2 -> 0 -> 1 -> 2 -> 0 -> 1...etc
-        //trace("i: " + i);
         if(enemiesClone[0].length==0 && enemiesClone[1].length==0 && enemiesClone[2].length==0){ //if all full
-            trace("break 1");
             break;
         }else if(enemiesClone[i].length==0){ //if one type full
-            //trace("one type FULL!" + i);
             continue;   
         }
         var randNum = Math.floor(Math.random() * enemiesClone[i].length);
-      /*  trace("rand: " + randNum);
-        trace("enemiesClone[i].length: " + enemiesClone[i].length);
-        trace("this.balance: " + this.balance);
-       */
         var currEnemy = enemiesClone[i][randNum];
-         //trace("currEnemy.value: " + currEnemy.value);
         if(this.balance >= currEnemy.value){
             ArrayUtils.removeItem(enemiesClone[i], randNum);
             currEnemy.init();//show enemy!!
@@ -83,47 +68,27 @@ KA.EnemyManager.showEnemies = function(){
         }else{
             if(i==1){
                 continue;
-                //trace("continue! @");
             }else{
-                trace("break 2");
                 break;
-                
             }
         }
-    }
-    
-    trace("this.balance: " + this.balance);
-    trace("enemiesClone[0].length: " + enemiesClone[0].length);
-    trace("enemiesClone[1].length: " + enemiesClone[1].length);
-    trace("enemiesClone[2].length: " + enemiesClone[2].length);
-    
-    /* 
-    for(i=0; i<){
-        
-    }
-    */
-    
+    }    
 }
-
 KA.EnemyManager.canBuy = function(){
     return this.balance>0 && this.areThereAdPlacesAvailable();
 }
-
 KA.EnemyManager.areThereAdPlacesAvailable = function(){
     return this.resultAdsArr != this.totAdsArr;
 }
-
 KA.EnemyManager.removeTiles = function(tiles){    
     for(var i=0; i<tiles.length; i++){
         var tile = tiles[i];
         this.tilemap.removeTile(tile.x, tile.y);
     }
 }
-
 KA.EnemyManager.getEnemies = function(){
     return this.enemies;
 }
-
 KA.EnemyManager.countEnemies = function(){
     var count = 0;
     for(i=0; i<this.enemies.length; i++){
@@ -133,7 +98,6 @@ KA.EnemyManager.countEnemies = function(){
     }
     return count;
 }
-
 KA.EnemyManager.removeEnemyFromArr = function(enemy){
     for(i = 0; i<this.enemies.length; i++){
         for(j=0; j<this.enemies[i].length; j++){
@@ -144,9 +108,8 @@ KA.EnemyManager.removeEnemyFromArr = function(enemy){
             }   
         }
     }
-    ////trace("now tot enemies: " + this.countEnemies());
+    //////trace("now tot enemies: " + this.countEnemies());
 }
-
 KA.EnemyManager.countTiles = function(){
     var count = 0;
     for(c=0; c<this.tilemap.width; c++){
@@ -157,9 +120,8 @@ KA.EnemyManager.countTiles = function(){
     }
     return count;
 }
-
 KA.EnemyManager.getEnemyFirstTileArray = function(id){
-    ////trace("id: " + id);
+    //////trace("id: " + id);
     //EnemyManager
     tArray = [];
     var i = 0;
@@ -170,7 +132,6 @@ KA.EnemyManager.getEnemyFirstTileArray = function(id){
     }
     return tArray;
 }
-
 KA.EnemyManager.removeSignals = function(){
     for(i=0; i<this.enemies.length; i++){
         for(j=0; j<this.enemies[i].length; j++){

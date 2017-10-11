@@ -14,10 +14,9 @@ KA.Bullet = function(game, brandId, sx, sy, fx, fy, speed){
     this.brandId = brandId;
     this.tint = KA.getTintFromBrandId(brandId);
 }
-
 KA.Bullet.prototype = Object.create(Phaser.Sprite.prototype); 
 KA.Bullet.prototype.constructor = KA.Bullet;
-
+/*FUNCTIONS*/
 KA.Bullet.prototype.update = function(){
     this.x += this.vx;
     this.y += this.vy;
@@ -26,7 +25,6 @@ KA.Bullet.prototype.update = function(){
         this.doDestroy();
     }
 }
-
 KA.Bullet.prototype.hasEndedTrajectory = function(){
     if(KA.Emitter.DETECTION_TYPE == 0){//circle
         var dist = Math.abs(Phaser.Math.distance(this.sx, this.sy, this.x, this.y));
@@ -41,7 +39,6 @@ KA.Bullet.prototype.hasEndedTrajectory = function(){
     }
     return true;
 }
-
 KA.Bullet.prototype.checkCollision = function(){
     //PLAYER
     if(KA.Collision.hitTestPoint(KA.player.body, this.x, this.y)){ 
@@ -53,7 +50,6 @@ KA.Bullet.prototype.checkCollision = function(){
         this.doDestroy();
     }
 }
-
 KA.Bullet.prototype.doDestroy = function(){
     this.destroy();
 }

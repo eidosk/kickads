@@ -1,7 +1,9 @@
 var KA = KA || {};
 KA.NPCManager = {}
-KA.NPCManager.init = function(game, json){
+KA.NPCManager.initChars = function(){
     this.characters = [];
+}
+KA.NPCManager.init = function(game, json){
     var house1x = json.layers[1].objects[0].x;
     var officex = json.layers[1].objects[1].x;
     KA.game.global.shopX = json.layers[1].objects[2].x;
@@ -10,9 +12,10 @@ KA.NPCManager.init = function(game, json){
     this.characters.push(char1);
     var char2 = new KA.NPC(game, "business_woman", house2x, officex, GO_TO_WORK);
     this.characters.push(char2);
-    //this.characters.push(new KA.NPC(game, "business_woman_zombie"));
+    this.initGlobalVars();
+    this.getGlobalVars();
+    this.addBars();//temp
 }
-
 KA.NPCManager.remove = function(char){
     for(i=0; i<this.characters.length; i++){
         var tChar = this.characters[i];
@@ -21,7 +24,45 @@ KA.NPCManager.remove = function(char){
         }
     }
 }
+KA.NPCManager.initGlobalVars = function(){
+    for(i=0; i<this.characters.length; i++){
+        var char = this.characters[i];
+        if(typeof(KA.game.global.brandInfluence[i])==='undefined'){
+            KA.game.global.brandInfluence[i] = [0,0,0,0];
+        }
+        if(typeof(KA.game.global.awareness[i])==='undefined'){
+            KA.game.global.awareness[i] = 0;
+        }
+    }
+}
+KA.NPCManager.halveBrandInfluence = function(){
+     for(i=0; i<this.characters.length; i++){
+         var char = this.characters[i];
+         for(j=0;j<char.brandInfluence.length;j++){
+             char.brandInfluence[j] = char.brandInfluence[j] *.5;
+         }
+    }
 
+}
+KA.NPCManager.addBars = function(){
+    for(i=0; i<this.characters.length; i++){
+        this.characters[i].addBars();
+    }
+}//Adds awareness and influence bars
+KA.NPCManager.setGlobalVars = function(){
+    for(i=0; i<this.characters.length; i++){
+        var char = this.characters[i];
+        KA.game.global.brandInfluence[i] = char.brandInfluence;
+        KA.game.global.awareness[i] = char.awareness;
+    }
+}//Stores Global vars at the end of the day
+KA.NPCManager.getGlobalVars = function(){
+    for(i=0; i<this.characters.length; i++){
+        var char = this.characters[i];
+        char.brandInfluence =  KA.game.global.brandInfluence[i];
+        char.awareness =  KA.game.global.awareness[i];
+    }
+}//Retrieves Global vars at the beginning of the day 
 KA.NPCManager.checkCollision = function(x, y, brandId){
     var match = false;
     for(i=0; i<this.characters.length; i++){
@@ -36,7 +77,6 @@ KA.NPCManager.checkCollision = function(x, y, brandId){
     }
     return match;
 }
-
 KA.NPCManager.everybodyGoHomeAfterWork = function(){
     for(i=0; i<this.characters.length; i++){
         var char = this.characters[i];
@@ -44,7 +84,6 @@ KA.NPCManager.everybodyGoHomeAfterWork = function(){
     }
     
 }
-
 KA.NPCManager.isEverybodyWorking = function(){
     var result = true;
     for(i=0; i<this.characters.length; i++){
@@ -56,7 +95,6 @@ KA.NPCManager.isEverybodyWorking = function(){
     }
     return result;
 }
-
 KA.NPCManager.isEverybodyHome = function(){
     var result = true;
     for(i=0; i<this.characters.length; i++){
@@ -68,7 +106,6 @@ KA.NPCManager.isEverybodyHome = function(){
     }
     return result;
 }
-
 KA.NPCManager.isEverybodyZombie = function(){
     var result = true;
     for(i=0; i<this.characters.length; i++){
@@ -80,13 +117,11 @@ KA.NPCManager.isEverybodyZombie = function(){
     }
     return result;
 }
-
 KA.NPCManager.isPlayerNearAnybody = function(){
     var result = false;
     for(i=0; i<this.characters.length; i++){
-        ////trace("loop");
         var char = this.characters[i];
-        if(char.isNearPlayer(KA.player)){
+        if(char.isNearPlayer(KA.player) && char.visible){
             result = true;
             break;
         } 

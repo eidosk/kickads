@@ -5,9 +5,11 @@ window.onload = function(){
         score : 0,
         sound : false,
         day : 0,
-        //balance : [0,0,0,0],
-        balance : 380, // 
-        totValue : 765, // all ads:  765
+        balance : [0,0,0,0],
+        brandInfluence : [], //arr for npcs
+        awareness : [], //arr for npcs
+        balance : 300,
+        totValue : 765, //all ads:  765
         shopX : 0, //
         profit : 0
     }
@@ -44,6 +46,11 @@ function round(value){
 function pressAnyKey(){
     bmpText = game.add.bitmapText(10, 26, 'myfont','Press any key', 16);
     onKeyDown();
+}
+
+function updateBalance(){
+    KA.game.global.balance += KA.game.global.profit * 50;
+    if(KA.game.global.balance>=KA.game.global.totValue)KA.game.global.balance = KA.game.global.totValue;
 }
 
 function onKeyDown(){

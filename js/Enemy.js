@@ -6,7 +6,7 @@ KA.Enemy = function(game, x, y, name){
     this.y = y;
     this.name = name;
     this.value = (this.width / TILE_WIDTH) * (this.height/TILE_WIDTH);
-    trace("this.value: " + this.value);
+    //trace("this.value: " + this.value);
 }
 KA.Enemy.prototype = Object.create(Phaser.Sprite.prototype);
 KA.Enemy.prototype.constructor = KA.Enemy;
@@ -28,11 +28,9 @@ KA.Enemy.prototype.init = function(){
     this.emitter = new KA.Emitter(game, fx, fy, 100, this.name);
     Signals.kick.add(this.onKick, this);
 }
-
 KA.Enemy.prototype.update = function(){
     
 }
-
 KA.Enemy.prototype.onKick = function(){
     var cx = KA.player.x + 11 * KA.player.scale.x;
     var cy = KA.player.y + 13;
@@ -49,9 +47,8 @@ KA.Enemy.prototype.onKick = function(){
         }
     }
 }
-
 KA.Enemy.prototype.emitParticles = function(cx, cy){
-    trace("EMIT PARTICLES: " + this.game + ", name: " + this.id);
+    //trace("EMIT PARTICLES: " + this.game + ", name: " + this.id);
     //if(this.particleEmitter!=null)this.destroyParticleEmitter();
     var particleEmitter = this.game.add.emitter(cx, cy, 10);
     particleEmitter.alpha = .75;
@@ -61,19 +58,15 @@ KA.Enemy.prototype.emitParticles = function(cx, cy){
     particleEmitter.start(true, 1000, null, 10);
     this.game.time.events.add(500, this.destroyParticleEmitter, this, particleEmitter);
 }
-
 KA.Enemy.prototype.destroyParticleEmitter = function(particleEmitter){
     particleEmitter.destroy();
 }
-
 KA.Enemy.prototype.doDestroy = function(){
     this.removeKickSignal();
     Signals.enemyDestroyed.dispatch(this.value);
     this.emitter.doDestroy();
     this.destroy();
 }
-
 KA.Enemy.prototype.removeKickSignal = function () {
-    trace("AAA");
     Signals.kick.remove(this.onKick, this);
 };

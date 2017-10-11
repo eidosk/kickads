@@ -12,7 +12,6 @@ var game;
 var bpmText;
 var anim;
 var newspaper_anim;
-
 function create(){
     
     
@@ -27,9 +26,8 @@ function create(){
     
     //game.time.events.add(1000, pressAnyKey, this);
 }
-
 function animationComplete(sprite, animation) {
-    trace("complete");
+    //trace("complete");
     
     
     var txt = "";
@@ -38,6 +36,8 @@ function animationComplete(sprite, animation) {
     }else{
         txt = "Not many sodas sold today!";
     }
+    updateBalance();
+    
     
     newspaper_anim.destroy();
     game.add.sprite(0,0, "newspaper");
@@ -45,6 +45,5 @@ function animationComplete(sprite, animation) {
     bmpText.tint = 0x223344;
     onKeyDown();
 }
-
 function update(){}
 function render(){}

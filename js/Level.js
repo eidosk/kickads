@@ -5,7 +5,7 @@ var groundLayer, platformLayer, adLayer;
 var player;
 var facing = 'left';
 var waiting = false;
-var bg, bgFar, bgSky;
+var bg, bgFar, bgSky, bgSkyFade;
 var deltaY = 5;
 var prevY = 0;
 var totAdTiles;
@@ -23,9 +23,7 @@ function init(){
     game.renderer.renderSession.roundPixels = true; //enable crisp rendering
     Phaser.Canvas.setImageRenderingCrisp(game.canvas);
     game.stage.smoothed = false;
-    //game.kickSignal = new Phaser.Signal();
 }
-
 function preload(){
     //JSON FILES
     game.load.tilemap('groundTilemap', 'data/ground.json', null, Phaser.Tilemap.TILED_JSON);
@@ -78,19 +76,18 @@ function preload(){
     //FONT
     game.load.bitmapFont('myfont', 'fonts/font.png', 'fonts/font.fnt');
 }
-
 function create(){
     game.physics.startSystem(Phaser.Physics.ARCADE); //enable arcade physics
-    bgSky = game.add.sprite(0, 0,'sky_cycle_1');
+    bgSky = game.add.sprite(0, 0,'sky_cycle_0');
+    bgSkyFade = game.add.sprite(0, 0,'sky_cycle_0');
+    bgSkyFade.alpha = 0;
     bgFar = game.add.sprite(0, 0,'bg_far');
     bgFar.alpha = .7;
     bg = game.add.sprite(0, 0,'background');
-    //bg = game.add.tileSprite(0, 0, WORLD_WIDTH, WORLD_HEIGHT, 'background');
     groundTilemap = game.add.tilemap('groundTilemap');
     groundTilemap.addTilesetImage('groundTile', 'groundTile');
     groundLayer = groundTilemap.createLayer('groundLayer');
     groundLayer.resizeWorld(); 
-    //game.physics.arcade.enable(groundLayer);  
     groundTilemap.setCollision(1);
     groundLayer.alpha = HIT_AREA_ALPHA;
     platformTilemap = game.add.tilemap("platformTilemap");
@@ -100,16 +97,13 @@ function create(){
     platformTilemap.setCollision(1);
     platformLayer.alpha = HIT_AREA_ALPHA;
     enemiesTilemap = game.add.tilemap("enemiesTilemap");
-    //enemyManager = new KA.EnemyManager(enemiesTilemap, game.cache.getJSON('adsInfo'));
-    
     KA.EnemyManager.init(enemiesTilemap, game.cache.getJSON('adsInfo'));
-    
     var objectsInfo = game.cache.getJSON('objectsInfo');
     adLayer = enemiesTilemap.createLayer('adLayer');
     enemiesTilemap.setCollision([1,2]);
     totAdTiles = KA.EnemyManager.countTiles();
     game.physics.arcade.gravity.y = GRAVITY;
-    KA.NPCManager.init(game, objectsInfo);
+    KA.NPCManager.initChars();
     var px = objectsInfo.layers[1].objects[4].x;
     var py = objectsInfo.layers[1].objects[4].y;
     player = new KA.Player(this.game, 'dude', px, py);
@@ -121,20 +115,33 @@ function create(){
     game.global.day++;
     gui.showDayText(game.global.day);
     KA.game.global.profit = 0;
-    //gui.showProgressBar();
     dayPart = -1;
     nextDayPart();
     //endDay();
-
+}
+function nextDayPart(){
+    //trace("next day part!!!");
+    dayPart++;
+    if(dayPart==1){
+        KA.NPCManager.init(game, game.cache.getJSON('objectsInfo')); //show npcs
+    }
     
+    if(dayPart>0){
+        bgSkyFade.alpha = 1;
+        bgSky.loadTexture("sky_cycle_" + dayPart);    
+        var tween = game.add.tween(bgSkyFade).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true);
+        tween.onComplete.add(this.onSkyFadeComplete, this);
+    }
+    
+    
+    
+    //bgSkyFade = game.add.sprite(0, 0,'sky_cycle_1');
+    this.game.time.events.add(DAY_PART_DURATION, checkBeforeNextDayPart, this);
+    waiting = false;
 }
 
-function nextDayPart(){
-    dayPart++;
-    trace("day part updated to: " + dayPart);
-    bgSky.loadTexture("sky_cycle_" + dayPart);
-    this.game.time.events.add(DAY_PART_DURATION *.5, checkBeforeNextDayPart, this);
-    waiting = false;
+function onSkyFadeComplete(){
+    bgSkyFade.loadTexture("sky_cycle_" + dayPart);
 }
 
 function checkBeforeNextDayPart(){
@@ -142,10 +149,10 @@ function checkBeforeNextDayPart(){
         KA.NPCManager.everybodyGoHomeAfterWork();
     }
     if(dayPart == 1 && !KA.NPCManager.isEverybodyWorking()){
-        trace("Wait...");
+        ////trace("Wait...");
         waiting = true;
     }else if(dayPart == 5 && !KA.NPCManager.isEverybodyHome()){
-        trace("Wait...");
+        ////trace("Wait...");
         waiting = true;
     }else if(dayPart>= TOT_DAY_PARTS-1){
         endDay();
@@ -153,20 +160,18 @@ function checkBeforeNextDayPart(){
         nextDayPart();
     }
 }
-
 function isWaitingForNpcs(){
     return waiting;
 }
-
 function endDay(){
+    KA.NPCManager.halveBrandInfluence();
+    KA.NPCManager.setGlobalVars();
     KA.EnemyManager.removeSignals();
     game.state.start("EndOfTheDay");
 }
-
 function gameOver(){
     game.state.start("GameOver");
 }
-
 function update(){
     //bgFar.x+=.01;
     bgFar.x= game.camera.x*0.03;
@@ -206,14 +211,14 @@ function renderEmitters(){
 /*
 function renderNPCBoundingBoxes(){
     for(i=0; i<KA.NPCManager.characters.length; i++){
-        ////trace(KA.NPCManager.characters[i]);
+        //////trace(KA.NPCManager.characters[i]);
         game.debug.body(KA.NPCManager.characters[i]);
     }
 }
 */
 function render() {
     if(DEBUG_MODE){
-        renderEmitters();
+        //renderEmitters();
         //renderNPCBoundingBoxes();
         game.debug.text(game.time.fps, 2, 14, "#ffffff");
         game.debug.body(player);
