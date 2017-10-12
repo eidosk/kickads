@@ -97,7 +97,7 @@ KA.Player.prototype.isKicking = function(){
     return state==KICK || state==KICK_AIR;
 }
 KA.Player.prototype.onRunAnimComplete = function(){
-    ////////trace("AIR!");
+    //////////trace("AIR!");
     needsAir = true;
     runCounter = 0;
     this.playAnim(RUN_BREATHE);
@@ -150,15 +150,19 @@ KA.Player.prototype.update = function(){
     var isOnFloor = this.body.onFloor();
     if (cursors.left.isDown){   //PRESS LEFT
         if(this.isFacingRight())this.flipX();
-        this.body.velocity.x = -RUN_SPEED;
-        if(state!=JUMP && !this.isKicking()){
-            this.run();
+        if(!cursors.down.isDown){
+            this.body.velocity.x = -RUN_SPEED;
+            if(state!=JUMP && !this.isKicking()){
+                this.run();
+            }
         }
-    }else if (cursors.right.isDown){  //PRESS RIGHT
+    }else if (cursors.right.isDown && !cursors.down.isDown){  //PRESS RIGHT
         if(this.isFacingLeft())this.flipX();
-        this.body.velocity.x = RUN_SPEED;
-        if(state!=JUMP && !this.isKicking()){
-            this.run();
+        if(!cursors.down.isDown){
+            this.body.velocity.x = RUN_SPEED;
+            if(state!=JUMP && !this.isKicking()){
+                this.run();
+            }
         }
     }else{
         if(this.isRunning() && isOnFloor){
@@ -182,7 +186,7 @@ KA.Player.prototype.update = function(){
             this.splat();
         }
         if(infoButton.isDown){
-            //trace("x: " + this.x);
+            ////trace("x: " + this.x);
         }
     }else{
         if(this.isRunning()){
@@ -203,9 +207,9 @@ KA.Player.prototype.update = function(){
     }
 }
 KA.Player.prototype.act = function(){
-    trace("ACT")
+    //trace("ACT")
     if(this.canAct()){
-        trace("doAction.dispatch");
+        //trace("doAction.dispatch");
         Signals.doAction.dispatch(this);
         this.acting = true;
     }
@@ -218,7 +222,7 @@ KA.Player.prototype.endAction = function(){
     this.acting = false;
 }
 KA.Player.prototype.canKick = function(){
-    if(KA.NPCManager.isPlayerNearAnybody())return false;
+    if(KA.NPCManager.isPlayerNearAnybody() || state==CROUCH)return false;
     else return true;
 }
 KA.Player.prototype.kick = function(){

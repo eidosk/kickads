@@ -1,7 +1,6 @@
 var KA = KA || {};
 var groundTilemap, platformTilemap, enemiesTilemap;
 var groundLayer, platformLayer, adLayer;
-//var enemyManager;
 var player;
 var facing = 'left';
 var waiting = false;
@@ -13,9 +12,7 @@ var dayPart;
 var game;
 var dayText;
 var gui;
-
 KA.Level = {init:init, preload: preload, create:create, update:update, render:render};
-
 function init(){
     game = this.game;
     game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
@@ -77,6 +74,8 @@ function preload(){
     game.load.bitmapFont('myfont', 'fonts/font.png', 'fonts/font.fnt');
 }
 function create(){
+    var shake = new Phaser.Plugin.Shake(game);
+    game.plugins.add(shake);
     game.physics.startSystem(Phaser.Physics.ARCADE); //enable arcade physics
     bgSky = game.add.sprite(0, 0,'sky_cycle_0');
     bgSkyFade = game.add.sprite(0, 0,'sky_cycle_0');
@@ -86,18 +85,24 @@ function create(){
     bg = game.add.sprite(0, 0,'background');
     groundTilemap = game.add.tilemap('groundTilemap');
     groundTilemap.addTilesetImage('groundTile', 'groundTile');
+   
     groundLayer = groundTilemap.createLayer('groundLayer');
     groundLayer.resizeWorld(); 
     groundTilemap.setCollision(1);
     groundLayer.alpha = HIT_AREA_ALPHA;
-    platformTilemap = game.add.tilemap("platformTilemap");
-    platformTilemap.addTilesetImage('platformTile', 'platformTile');
-    platformLayer = platformTilemap.createLayer('platformLayer');
-    platformLayer.resizeWorld();
-    platformTilemap.setCollision(1);
-    platformLayer.alpha = HIT_AREA_ALPHA;
     enemiesTilemap = game.add.tilemap("enemiesTilemap");
     KA.EnemyManager.init(enemiesTilemap, game.cache.getJSON('adsInfo'));
+    platformTilemap = game.add.tilemap("platformTilemap"); 
+    platformTilemap.addTilesetImage('platformTile', 'platformTile');
+    
+    platformLayer = platformTilemap.createLayer('platformLayer');
+    
+    platformLayer.resizeWorld();
+    
+    
+    platformTilemap.setCollision(1);
+    
+    platformLayer.alpha = HIT_AREA_ALPHA;
     var objectsInfo = game.cache.getJSON('objectsInfo');
     adLayer = enemiesTilemap.createLayer('adLayer');
     enemiesTilemap.setCollision([1,2]);
@@ -108,7 +113,7 @@ function create(){
     var py = objectsInfo.layers[1].objects[4].y;
     player = new KA.Player(this.game, 'dude', px, py);
     KA.player = player;
-    game.physics.enable(platformLayer, Phaser.Physics.ARCADE);
+    //game.physics.enable(platformLayer, Phaser.Physics.ARCADE);
     game.time.advancedTiming = true;
     //
     gui = new KA.GUI(this.game);
@@ -118,6 +123,49 @@ function create(){
     dayPart = -1;
     nextDayPart();
     //endDay();
+    findHiddenPlatformTiles();
+    platformLayer.kill();
+    platformLayer.destroy();
+    platformLayer = null;
+    platformTilemap.replace(1, 0, 3, 27, 2, 1);
+    platformLayer = platformTilemap.createLayer('platformLayer');
+    platformLayer.alpha = HIT_AREA_ALPHA;
+    //platformTilemap.currentLayer = platformLayer;
+    platformTilemap.setCollision(1, true, platformLayer, true);
+    /*
+    platformLayer = platformTilemap.createLayer('platformLayer');
+    platformLayer.resizeWorld();
+    platformLayer.alpha = HIT_AREA_ALPHA;
+    game.physics.enable(platformLayer, Phaser.Physics.ARCADE);
+    */
+    //replace(source, dest, x, y, width, height [, layer])
+}
+function findHiddenPlatformTiles(){
+    
+    var enemies = KA.EnemyManager.enemies;
+    
+    trace("pl layer parent: " + platformLayer.parent.name);
+
+    for(i=0; i< enemies.length; i++){
+        for(j=0; j< enemies[i].length; j++){
+            var enemy = enemies[i][j];
+            if(enemy.parent){
+                temp = enemy;
+                return;
+                /*if(game.physics.arcade.overlap(enemy, platformLayer)){
+                    trace("OVERLAPAPA");
+                }*/
+            }
+            
+        }
+    }
+   
+}
+function enemyPlatformOverlapCallback(spriteThatCollided, tileThatCollided){
+    
+    trace("processEnemyPlatformOverlap: " + tileThatCollided.x);
+    
+    return true;
 }
 function nextDayPart(){
     //trace("next day part!!!");
@@ -125,25 +173,19 @@ function nextDayPart(){
     if(dayPart==1){
         KA.NPCManager.init(game, game.cache.getJSON('objectsInfo')); //show npcs
     }
-    
     if(dayPart>0){
         bgSkyFade.alpha = 1;
         bgSky.loadTexture("sky_cycle_" + dayPart);    
         var tween = game.add.tween(bgSkyFade).to({ alpha: 0 }, 500, Phaser.Easing.Linear.None, true);
         tween.onComplete.add(this.onSkyFadeComplete, this);
     }
-    
-    
-    
     //bgSkyFade = game.add.sprite(0, 0,'sky_cycle_1');
     this.game.time.events.add(DAY_PART_DURATION, checkBeforeNextDayPart, this);
     waiting = false;
 }
-
 function onSkyFadeComplete(){
     bgSkyFade.loadTexture("sky_cycle_" + dayPart);
 }
-
 function checkBeforeNextDayPart(){
     if(dayPart == 4){
         KA.NPCManager.everybodyGoHomeAfterWork();
@@ -173,32 +215,26 @@ function gameOver(){
     game.state.start("GameOver");
 }
 function update(){
-    //bgFar.x+=.01;
     bgFar.x= game.camera.x*0.03;
     handleCollisions(this);
 }
-//makes sure the player will land on the platform only when falling from above
-function processPlatformCollide(spriteThatCollided, tileThatCollided){
-    var py = spriteThatCollided.y + spriteThatCollided.height;
-    var ty = tileThatCollided.y * 12
-    if(py<=ty)return true;
-    else return false;
-}
-//KA.Level.prototype.wellDone = function(){
-function wellDone(){
-     game.state.start("WellDone");
-}
-//KA.Level.prototype.handleCollisions = function(game){
 function handleCollisions(game){
     game.physics.arcade.collide(player, groundLayer);
     if(!jumpingDown)game.physics.arcade.collide(player, platformLayer, null, processPlatformCollide, game);
     //game.physics.arcade.collide(player, adLayer, null, processAdCollide, game);
 }
-//KA.Level.prototype.getTileX = function(tile){
+function processPlatformCollide(spriteThatCollided, tileThatCollided){
+    var py = spriteThatCollided.y + spriteThatCollided.height;
+    var ty = tileThatCollided.y * 12
+    if(py<=ty)return true;
+    else return false;
+}//makes sure the player will land on the platform only when falling from above
+function wellDone(){
+     game.state.start("WellDone");
+}
 function getTileX(tile){
     return tile.x * TILE_WIDTH - game.camera.x;
 }
-//KA.Level.prototype.renderEmitters = function(){
 function renderEmitters(){
     var enemies = KA.EnemyManager.getEnemies(); //optimize... render only visible... make static
     for(i=0; i<enemies.length; i++){

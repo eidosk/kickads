@@ -15,7 +15,12 @@ KA.Enemy.KICK_DAMAGE = 3.5;
 /* FUNCTIONS */
 KA.Enemy.prototype.init = function(){
     //this.shown = true;
-    game.add.existing(this);
+    //this.game.physics.enable(this, Phaser.Physics.ARCADE);
+    
+    this.shake = new Phaser.Plugin.Shake(game);
+    game.plugins.add(this.shake);
+    
+    this.game.add.existing(this);
     this.frame = 0;
     //this.shown = false;
     this.totFrames = this.animations.frameTotal / 4;
@@ -45,6 +50,11 @@ KA.Enemy.prototype.onKick = function(){
             var tween = this.game.add.tween(this).to( { alpha: 0.1, y: this.y + 12 }, 300, Phaser.Easing.Linear.None, true);
             tween.onComplete.add(this.doDestroy, this);
         }
+        
+        /* Use it like: */
+        trace("SHAEK");
+        this.shake.shake(2.5, this);
+        
     }
 }
 KA.Enemy.prototype.emitParticles = function(cx, cy){

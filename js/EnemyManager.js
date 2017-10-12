@@ -74,6 +74,8 @@ KA.EnemyManager.showEnemies = function(){
         }
     }    
 }
+
+
 KA.EnemyManager.canBuy = function(){
     return this.balance>0 && this.areThereAdPlacesAvailable();
 }

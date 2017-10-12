@@ -2,7 +2,7 @@ var KA = KA || {};
 //GAMEPLAY
 var HIT_DAMAGE = [10,8,6,4];
 //ALPHA
-var HIT_AREA_ALPHA = 0;
+var HIT_AREA_ALPHA = 0.4;
 var BULLET_ALPHA = 1;
 var RAYS_ALPHA = 0;
 var START_STATE = "Level";
