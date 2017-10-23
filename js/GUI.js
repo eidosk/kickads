@@ -1,5 +1,4 @@
 var KA = KA || {};
-
 KA.GUI = function(game) {
     Phaser.Sprite.call(this, game);
     game.add.existing(this);
@@ -18,8 +17,8 @@ KA.GUI.BAR_WIDTH = 40;
 KA.GUI.BAR_HEIGHT = 4;
 /*FUNCTIONS*/
 KA.GUI.prototype.addProgressBar = function(){
-    this.balance = KA.game.global.balance;
-    this.totValue = KA.game.global.totValue;
+    this.balance = KA.global.balance;
+    this.totValue = KA.global.totValue;
     this.progressBar = new KA.ProgressBar(this.game, KA.GUI.BAR_WIDTH , KA.GUI.BAR_HEIGHT, this.balance / this.totValue, 0xFF3300);
     this.addChild(this.progressBar);
     this.progressBar.x = 16;

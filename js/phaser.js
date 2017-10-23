@@ -44213,7 +44213,6 @@ Phaser.Keyboard.prototype = {
         if (!this._keys[keycode])
         {
             this._keys[keycode] = new Phaser.Key(this.game, keycode);
-
             this.addKeyCapture(keycode);
         }
 

@@ -5,9 +5,6 @@ var player;
 var facing = 'left';
 var waiting = false;
 var bg, bgFar, bgSky, bgSkyFade;
-var deltaY = 5;
-var prevY = 0;
-var totAdTiles;
 var dayPart;
 var game;
 var dayText;
@@ -59,6 +56,8 @@ function preload(){
     game.load.image("speech_corner", "images/speech_corner.png");
     game.load.image("speech_arrow", "images/speech_arrow.png");
     game.load.image("speech_body", "images/speech_body.png");
+    game.load.image("speech_arrow_white", "images/speech_arrow_white.png");
+    game.load.image("think_line_body", "images/think_line_body.png");
     game.load.image("button_x", "images/button_x.png");
     game.load.image("sky_cycle_0", "images/sky_cycle_0.png");
     game.load.image("sky_cycle_1", "images/sky_cycle_1.png");
@@ -85,7 +84,6 @@ function create(){
     bg = game.add.sprite(0, 0,'background');
     groundTilemap = game.add.tilemap('groundTilemap');
     groundTilemap.addTilesetImage('groundTile', 'groundTile');
-   
     groundLayer = groundTilemap.createLayer('groundLayer');
     groundLayer.resizeWorld(); 
     groundTilemap.setCollision(1);
@@ -94,33 +92,25 @@ function create(){
     KA.EnemyManager.init(enemiesTilemap, game.cache.getJSON('adsInfo'));
     platformTilemap = game.add.tilemap("platformTilemap"); 
     platformTilemap.addTilesetImage('platformTile', 'platformTile');
-    
     platformLayer = platformTilemap.createLayer('platformLayer');
-    
     platformLayer.resizeWorld();
-    
-    
     platformTilemap.setCollision(1);
-    
     platformLayer.alpha = HIT_AREA_ALPHA;
     var objectsInfo = game.cache.getJSON('objectsInfo');
     adLayer = enemiesTilemap.createLayer('adLayer');
     enemiesTilemap.setCollision([1,2]);
-    totAdTiles = KA.EnemyManager.countTiles();
     game.physics.arcade.gravity.y = GRAVITY;
     KA.NPCManager.initChars();
     var px = objectsInfo.layers[1].objects[4].x;
     var py = objectsInfo.layers[1].objects[4].y;
     player = new KA.Player(this.game, 'dude', px, py);
     KA.player = player;
-    //game.physics.enable(platformLayer, Phaser.Physics.ARCADE);
     game.time.advancedTiming = true;
-    //
     gui = new KA.GUI(this.game);
-    game.global.day++;
-    gui.showDayText(game.global.day);
-    KA.game.global.profit = 0;
-    dayPart = -1;
+    KA.global.day++;
+    gui.showDayText(KA.global.day);
+    initGlobalVars();  
+    dayPart = 0;
     nextDayPart();
     //endDay();
     findHiddenPlatformTiles();
@@ -140,31 +130,27 @@ function create(){
     */
     //replace(source, dest, x, y, width, height [, layer])
 }
-function findHiddenPlatformTiles(){
-    
-    var enemies = KA.EnemyManager.enemies;
-    
-    trace("pl layer parent: " + platformLayer.parent.name);
 
+function initGlobalVars(){
+    //KA.global.profit = 0;
+    KA.global.dialogues = game.cache.getJSON('dialogues');
+}
+
+
+function findHiddenPlatformTiles(){
+    var enemies = KA.EnemyManager.enemies;
     for(i=0; i< enemies.length; i++){
         for(j=0; j< enemies[i].length; j++){
             var enemy = enemies[i][j];
             if(enemy.parent){
                 temp = enemy;
                 return;
-                /*if(game.physics.arcade.overlap(enemy, platformLayer)){
-                    trace("OVERLAPAPA");
-                }*/
             }
-            
         }
     }
-   
 }
 function enemyPlatformOverlapCallback(spriteThatCollided, tileThatCollided){
-    
     trace("processEnemyPlatformOverlap: " + tileThatCollided.x);
-    
     return true;
 }
 function nextDayPart(){
@@ -244,14 +230,6 @@ function renderEmitters(){
         }
     }
 }
-/*
-function renderNPCBoundingBoxes(){
-    for(i=0; i<KA.NPCManager.characters.length; i++){
-        //////trace(KA.NPCManager.characters[i]);
-        game.debug.body(KA.NPCManager.characters[i]);
-    }
-}
-*/
 function render() {
     if(DEBUG_MODE){
         //renderEmitters();

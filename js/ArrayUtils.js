@@ -1,4 +1,4 @@
-function ArrayUtils() {};
+ArrayUtils = {};
 ArrayUtils.clone = function(myArray){
     return myArray.slice(0);
 }

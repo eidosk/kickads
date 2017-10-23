@@ -8,12 +8,12 @@ Banner Value: 10
 Billboards Value: 50
 Squares Value: 9
 */
-KA.EnemyManager = {}
+KA.EnemyManager = {};
 KA.EnemyManager.init = function(tilemap, jsonInfo){
     this.tilemap = tilemap;
     this.info = jsonInfo;
     this.enemyNames = ["banner","billboard","square"]; //temp, should be dynamic
-    this.balance = KA.game.global.balance; //temp, only one brand 
+    this.balance = KA.global.balance; //temp, only one brand 
     this.totAdTypes = this.info.tilesets.length;
     this.totAdsArr = [0,0,0];
     this.resultAdsArr = [0,0,0];
@@ -45,7 +45,7 @@ KA.EnemyManager.replaceTiles = function(){
             this.removeTiles(tiles);
         }
     }
-    KA.game.global.totValue = this.totValue;
+    KA.global.totValue = this.totValue;
 }
 /* Finds how many ads are needed for each type depending on the brand balance. Inits and shows those number of ads, choosing randomly */
 KA.EnemyManager.showEnemies = function(){    
@@ -74,8 +74,6 @@ KA.EnemyManager.showEnemies = function(){
         }
     }    
 }
-
-
 KA.EnemyManager.canBuy = function(){
     return this.balance>0 && this.areThereAdPlacesAvailable();
 }

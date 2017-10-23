@@ -2,7 +2,7 @@ var KA = KA || {};
 //GAMEPLAY
 var HIT_DAMAGE = [10,8,6,4];
 //ALPHA
-var HIT_AREA_ALPHA = 0.4;
+var HIT_AREA_ALPHA = 0;
 var BULLET_ALPHA = 1;
 var RAYS_ALPHA = 0;
 var START_STATE = "Level";
@@ -17,7 +17,6 @@ var WORLD_HEIGHT = 360;
 var EMITTER_RADIUS = 100;
 var TILE_WIDTH = 12;
 var FLOOR_Y = WORLD_HEIGHT - 12;
-var POP_UP_Y = -12;
 //PHYSICS
 var DAY_PART_DURATION = 5000; //ms
 var ATTACK_SPEED = 120;

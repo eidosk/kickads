@@ -1,5 +1,18 @@
 {
-    "player":[],
+    "player":{
+        "approach":[
+            "Excuse me!",
+            "Hello",
+            "Hi!",
+            "Hey!",
+            "Ciao"
+        ],
+        "question":[
+            "Where are you going?",
+            "Never mind",
+            "Who do you think you are?"
+        ]
+    },
     "npcs": {
         "goingToWork":[
             "I am going to work",
@@ -10,6 +23,11 @@
             "I am going home.",
             "Sorry, I am tired",
             "My family is waiting for me!"
+        ],
+        "replyApproach":[
+            "Yes?",
+            "What?",
+            "Can I help you?"
         ],
         "influenced":[
             [

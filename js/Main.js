@@ -1,7 +1,7 @@
 var KA = KA || {};
 window.onload = function(){
     KA.game = new Phaser.Game(GAME_WIDTH, GAME_HEIGHT, Phaser.CANVAS, 'game');
-    KA.game.global = {
+    KA.global = {
         score : 0,
         sound : false,
         day : 0,
@@ -11,7 +11,9 @@ window.onload = function(){
         balance : 300,
         totValue : 765, //all ads:  765
         shopX : 0, //
-        profit : 0
+        profit : 0,
+        currentSpeaker : null,
+        dialogues : null
     }
     KA.game.state.add("Level", KA.Level);
     KA.game.state.add("WellDone", KA.WellDone);
@@ -20,45 +22,26 @@ window.onload = function(){
     KA.game.state.start(START_STATE);
 }
 
-KA.getTintFromBrandId = function(brandId){
-    var tint = "";
-    switch(brandId){
-           case 0:
-                tint = TINT_SODA;
-           break;
-           case 1:
-                tint = TINT_FOOD;
-           break;
-           case 2:
-                tint= TINT_TECH;
-           break;
-    }
-    return tint;
-}
+//GLOBAL FUNCTIONS
 function trace(message){
     console.log(message);
 }
-
 function round(value){
     return Phaser.Math.roundAwayFromZero(value);
 }
-
 function pressAnyKey(){
     bmpText = game.add.bitmapText(10, 26, 'myfont','Press any key', 16);
     onKeyDown();
 }
-
 function updateBalance(){
-    KA.game.global.balance += KA.game.global.profit * 50;
-    if(KA.game.global.balance>=KA.game.global.totValue)KA.game.global.balance = KA.game.global.totValue;
+    KA.global.balance += KA.global.profit * 50;
+    if(KA.global.balance>=KA.global.totValue)KA.global.balance = KA.global.totValue;
 }
-
 function onKeyDown(){
     game.input.keyboard.onDownCallback = function(){
         game.state.start("Level");
     }
 }
-
 function romanize (num) {
     if (!+num)
         return NaN;
@@ -72,4 +55,3 @@ function romanize (num) {
         roman = (key[+digits.pop() + (i * 10)] || "") + roman;
     return Array(+digits.join("") + 1).join("M") + roman;
 }
-

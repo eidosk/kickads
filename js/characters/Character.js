@@ -1,11 +1,12 @@
 var KA = KA || {};
-KA.Character = function(game, name){
-    Phaser.Sprite.call(this, game, 0, 0, name);
+KA.Character = function(game, name, x, y){
+    Phaser.Sprite.call(this, game, x, y, name);
     game.add.existing(this);
     this.state = "";
     this.speechBubble = null;
     this.popUp = null; // pop up is a text message on the character (ex: press x to interact)
     this.timerEvent = null;
+    this.speechBubbleY = -12;
 }
 KA.Character.prototype = Object.create(Phaser.Sprite.prototype);
 KA.Character.prototype.constructor = KA.Character;
@@ -34,6 +35,10 @@ KA.Character.prototype.isFacing = function(left = true){
         return this.scale.x == 1;
     }
 }
+KA.Character.prototype.face = function(x){
+    if(x >= this.x && this.scale.x == -1)this.scale.x = 1;
+    else if(x < this.x && this.scale.x == 1)this.scale.x = -1;
+}
 KA.Character.prototype.flipX = function(){
     this.scale.setTo(this.scale.x * -1, 1);
     if(this.speechBubble!=null)this.speechBubble.flipText();
@@ -41,20 +46,28 @@ KA.Character.prototype.flipX = function(){
 KA.Character.prototype.isOffScreen = function(){
     return this.x < 0 || this.x > WORLD_WIDTH;
 }
-KA.Character.prototype.speak = function(msg, y, willDisappear){
-    if (typeof(willDisappear)==='undefined') willDisappear = true;
+KA.Character.prototype.speak = function(msg, willDisappear){
+    if (typeof(willDisappear)==='undefined') willDisappear = false;
+    if(KA.global.currentSpeaker!=null){
+        KA.global.currentSpeaker.removeSpeechBubble();
+    }
+    KA.global.currentSpeaker = this;
     if(this.timerEvent){
         this.game.time.events.remove(this.timerEvent);
         this.timerEvent = null;
     }
     this.removeSpeechBubble();
-    this.speechBubble = new KA.SpeechBubble(this.game, msg, this, y);
+    if(typeof(msg)==='string'){
+        this.speechBubble = new KA.SpeechBubble(this.game, msg, this, this.speechBubbleY);   
+    }else if(msg instanceof Array){
+        this.speechBubble = new KA.SpeechChoiceBubble(this.game, msg, this, this.speechBubbleY);
+    }
     this.addChild(this.speechBubble);
     if(willDisappear == true)this.timerEvent = this.game.time.events.add(3000, this.removeSpeechBubble, this); 
 }
 KA.Character.prototype.showPopUp = function(){
     if(!this.isSpeaking()){
-        this.speak("...", POP_UP_Y , false);
+        this.speak("...");
         this.popUp = true;
     }
 }

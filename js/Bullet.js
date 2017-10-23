@@ -42,7 +42,6 @@ KA.Bullet.prototype.hasEndedTrajectory = function(){
 KA.Bullet.prototype.checkCollision = function(){
     //PLAYER
     if(KA.Collision.hitTestPoint(KA.player.body, this.x, this.y)){ 
-        //KA.player.tempTint(this.tint);
         this.doDestroy();
     }
     //NPCs
