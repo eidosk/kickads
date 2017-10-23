@@ -56,7 +56,7 @@ KA.NPC.prototype.canBeShot = function(){
     return this.visible && !this.immune;
 }
 KA.NPC.prototype.createBody = function(){
-    var body = game.make.sprite(-5, 10, 'pixel');
+    var body = this.game.make.sprite(-5, 10, 'pixel');
     body.width = 14, body.height = 20;
     body.alpha = HIT_AREA_ALPHA;
     return body;
@@ -172,11 +172,11 @@ KA.NPC.prototype.missionComplete = function(){
         break;
         case GO_TO_WORK:
             this.state = KA.NPC.WORKING;
-            if(KA.NPCManager.isEverybodyWorking() && isWaitingForNpcs()) nextDayPart();
+            if(KA.NPCManager.isEverybodyWorking() && KA.Level.isWaitingForNpcs()) KA.Level.nextDayPart();
         break;
         case GO_HOME:
             this.state = KA.NPC.AT_HOME;
-            if(KA.NPCManager.isEverybodyHome() && isWaitingForNpcs()) nextDayPart();
+            if(KA.NPCManager.isEverybodyHome() && KA.Level.isWaitingForNpcs()) KA.Level.nextDayPart();
         break;
     }
     this.disappear();
@@ -210,11 +210,11 @@ KA.NPC.prototype.removeBubbles = function(name){
 }
 KA.NPC.prototype.replyApproach = function(){
     this.stopWalking();
-    this.face(player.x);
-    player.face(this.x);
-    var replyArray = game.cache.getJSON('dialogues').npcs.replyApproach;
+    this.face(KA.player.x);
+    KA.player.face(this.x);
+    var replyArray = this.game.cache.getJSON('dialogues').npcs.replyApproach;
     this.speak(ArrayUtils.getRandomItem(replyArray));
-    this.game.time.events.add(2000, player.thinkLine, player);
+    this.game.time.events.add(2000, KA.player.thinkLine, KA.player);
 }
 KA.NPC.prototype.resumeMission = function(){
     trace("RESUME!");

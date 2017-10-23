@@ -21,7 +21,6 @@ window.onload = function(){
     KA.game.state.add("EndOfTheDay", KA.EndOfTheDay);
     KA.game.state.start(START_STATE);
 }
-
 //GLOBAL FUNCTIONS
 function trace(message){
     console.log(message);
@@ -30,7 +29,7 @@ function round(value){
     return Phaser.Math.roundAwayFromZero(value);
 }
 function pressAnyKey(){
-    bmpText = game.add.bitmapText(10, 26, 'myfont','Press any key', 16);
+    bmpText = KA.game.add.bitmapText(10, 26, 'myfont','Press any key', 16);
     onKeyDown();
 }
 function updateBalance(){
@@ -38,8 +37,8 @@ function updateBalance(){
     if(KA.global.balance>=KA.global.totValue)KA.global.balance = KA.global.totValue;
 }
 function onKeyDown(){
-    game.input.keyboard.onDownCallback = function(){
-        game.state.start("Level");
+    KA.game.input.keyboard.onDownCallback = function(){
+        KA.game.state.start("Level");
     }
 }
 function romanize (num) {

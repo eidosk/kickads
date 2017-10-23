@@ -17,8 +17,8 @@ KA.Enemy.prototype.init = function(){
     //this.shown = true;
     //this.game.physics.enable(this, Phaser.Physics.ARCADE);
     
-    this.shake = new Phaser.Plugin.Shake(game);
-    game.plugins.add(this.shake);
+    this.shake = new Phaser.Plugin.Shake(this.game);
+    this.game.plugins.add(this.shake);
     
     this.game.add.existing(this);
     this.frame = 0;
@@ -30,7 +30,7 @@ KA.Enemy.prototype.init = function(){
     this.particleEmitter = null;
     var fx = this.x + this.width * .5;
     var fy = this.y + this.height * .5;
-    this.emitter = new KA.Emitter(game, fx, fy, 100, this.name);
+    this.emitter = new KA.Emitter(this.game, fx, fy, 100, this.name);
     Signals.kick.add(this.onKick, this);
 }
 KA.Enemy.prototype.update = function(){

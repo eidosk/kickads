@@ -23,9 +23,9 @@ KA.GUI.prototype.addProgressBar = function(){
     this.addChild(this.progressBar);
     this.progressBar.x = 16;
     this.progressBar.y = 4;
-    this.adText = game.make.bitmapText(2, -2, 'myfont', "ADS", 16);
+    this.adText = this.game.make.bitmapText(2, -2, 'myfont', "ADS", 16);
     this.adText.tint = 0x000000;
-    this.adText2 = game.make.bitmapText(2, -3, 'myfont', "ADS", 16);
+    this.adText2 = this.game.make.bitmapText(2, -3, 'myfont', "ADS", 16);
     this.addChild(this.adText);
     this.addChild(this.adText2);
 }
@@ -37,7 +37,7 @@ KA.GUI.prototype.onEnemyDestroyed = function(value){
     this.progressBar.updateProgress(progress);
 }
 KA.GUI.prototype.showDayText = function(day){
-    this.dayText = game.make.bitmapText(0, 10, 'myfont', "Day " + romanize(day), 32);
+    this.dayText = this.game.make.bitmapText(0, 10, 'myfont', "Day " + romanize(day), 32);
     //this.dayText.tint = 0x223344;
     this.addChild(this.dayText);
     this.dayText.x = GAME_WIDTH * .5 - this.dayText.width * .5;

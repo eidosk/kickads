@@ -43,11 +43,10 @@ KA.SpeechChoiceBubble.prototype.nextLine = function(){
     this.setText(this.lines[this.currentLine])
     this.add(this.text);
 }
-
 KA.SpeechChoiceBubble.prototype.resumeGame = function(){  //wrong scope!!
     trace("RESUME");
     KA.player.enableInput();
-    game.input.keyboard.onDownCallback = null;
+    this.game.input.keyboard.onDownCallback = null;
     KA.player.removeSpeechBubble();
     KA.player.dialoguePartner.resumeMission();
     KA.player.dialoguePartner = null; 

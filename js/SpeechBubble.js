@@ -1,6 +1,5 @@
 var KA = KA || {};
 KA.SpeechBubble = function(game, msg, character, y){
-    trace("yyy: " + y);
     Phaser.Group.call(this, game);
     game.add.existing(this);
     this.topLeftCorner = game.make.sprite(0, 0,'speech_corner');
