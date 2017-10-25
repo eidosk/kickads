@@ -1,5 +1,20 @@
 var KA = KA || {};
 KA.NPCManager = {
+    init: function(game, json){
+        var house1x = json.layers[1].objects[0].x;
+        var officex = json.layers[1].objects[1].x;
+        KA.global.shopX = json.layers[1].objects[2].x;
+        var house2x = json.layers[1].objects[3].x;
+        //var char1 = new KA.NPC(game, "business_man", house1x, officex, GO_TO_WORK);
+        var char1 = new KA.BusinessMan(game, house1x, officex, GO_TO_WORK);
+        this.characters.push(char1);
+        var char2 = new KA.NPC(game, "business_woman", house2x, officex, GO_TO_WORK);
+        this.characters.push(char2);
+        this.initGlobalVars();
+        this.getGlobalVars();
+        this.addBars();//temp
+    },
+    //
     addBars: function(){
         for(i=0; i<this.characters.length; i++){
             this.characters[i].addBars();
@@ -42,19 +57,6 @@ KA.NPCManager = {
     },
     initChars: function(){
         this.characters = [];
-    },
-    init: function(game, json){
-        var house1x = json.layers[1].objects[0].x;
-        var officex = json.layers[1].objects[1].x;
-        KA.global.shopX = json.layers[1].objects[2].x;
-        var house2x = json.layers[1].objects[3].x;
-        var char1 = new KA.NPC(game, "business_man", house1x, officex, GO_TO_WORK);
-        this.characters.push(char1);
-        var char2 = new KA.NPC(game, "business_woman", house2x, officex, GO_TO_WORK);
-        this.characters.push(char2);
-        this.initGlobalVars();
-        this.getGlobalVars();
-        this.addBars();//temp
     },
     initGlobalVars: function(){
         for(i=0; i<this.characters.length; i++){

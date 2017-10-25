@@ -6,7 +6,8 @@ KA.NPC = function(game, name, x, fx, mission){
     
     KA.Character.call(this, game, name, x, 0);
     this.startX = x;
-    this.zombie = false, this.stunned = false, this.immune = false, this.distancing = false, this.speaking = false; //can be immune after shopping, until the end of the day, or when 100% aware
+    this.zombie = false, this.stunned = false, this.immune = false, this.distancing = false;
+    //can be immune after shopping, until the end of the day, or when 100% aware
     this.missionId = -1;
     this.prevMissionId = -1;
     this.missionX = this.workX = fx;
@@ -27,7 +28,7 @@ KA.NPC = function(game, name, x, fx, mission){
     this.bubbles.animations.add('bubble_mid', [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 29, 29], 8, true);
     this.bubbles.animations.add('bubble_high', [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46], 8, true);
     this.body = this.addChild(this.createBody());
-    this.dialogues = game.cache.getJSON('dialogues').npcs;
+    this.dialogues = KA.global.dialogues.npc;
     Signals.doAction.add(this.onAction, this);
 };
 KA.NPC.prototype = Object.create(KA.Character.prototype); 
@@ -158,6 +159,9 @@ KA.NPC.prototype.isWorking = function(){
 KA.NPC.prototype.isZombie = function(){
     return this.zombie;
 }
+KA.NPC.prototype.listen = function(msg){
+    
+}
 KA.NPC.prototype.loseAwareness = function(){
     this.awareness-- ;
     if(this.awareness<=0)this.awareness=0;
@@ -183,10 +187,7 @@ KA.NPC.prototype.missionComplete = function(){
 }
 KA.NPC.prototype.onAction = function(player) {
     if(this.isNearPlayer(player)){
-        this.distancing = true;
-        this.immune = true;
-        this.awarenessBar.visible = this.influenceBar.visible = false;
-        player.approach(this);
+        KA.Dialogue.approach(this);
     }
 }
 KA.NPC.prototype.onCollision = function(brandId){
@@ -208,17 +209,9 @@ KA.NPC.prototype.recoverFromStun = function(){
 KA.NPC.prototype.removeBubbles = function(name){
     if(this.bubbles!=null)this.removeChild(this.bubbles);
 }
-KA.NPC.prototype.replyApproach = function(){
-    this.stopWalking();
-    this.face(KA.player.x);
-    KA.player.face(this.x);
-    var replyArray = this.game.cache.getJSON('dialogues').npcs.replyApproach;
-    this.speak(ArrayUtils.getRandomItem(replyArray));
-    this.game.time.events.add(2000, KA.player.thinkLine, KA.player);
-}
+
 KA.NPC.prototype.resumeMission = function(){
     trace("RESUME!");
-    this.speaking = false;
     this.stunned = false;
     this.face(this.missionX);
     this.animations.play("walk");
@@ -273,7 +266,7 @@ KA.NPC.prototype.update = function(){
         if(this.isOffScreen())this.flipX();
         if(this.isNearPlayer(KA.player) && !this.distancing){
             this.showPopUp();
-        }else if(this.popUp && this.speechBubble != null && this.speechBubble.text.text == "..."){
+        }else if(this.popUp && this.speechBubble != null && this.speechBubble.getText() == "..."){
             this.removePopUp();
         }
         if(this.x > this.missionX-3 && this.x < this.missionX+3){
@@ -282,9 +275,9 @@ KA.NPC.prototype.update = function(){
         if(this.distancing){
             var distance = Math.abs(KA.player.x - this.x);
             if(distance >= KA.NPC.TALK_DISTANCE){
-                this.replyApproach();
+                //this.replyApproach();
+                KA.Dialogue.replyApproach();
                 this.distancing = false;
-                this.speaking = true;
             }
         }
     }

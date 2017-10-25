@@ -98,7 +98,7 @@ KA.Level = {
         this.gui = new KA.GUI(this.game);
         KA.global.day++;
         this.gui.showDayText(KA.global.day);
-        this.initGlobalVars();  
+        KA.global.initVars(); 
         this.dayPart = 0;
         this.nextDayPart();
         //this.endDay();
@@ -178,10 +178,7 @@ KA.Level = {
     },
     handleCollisions: function(){
         this.game.physics.arcade.collide(this.player, this.groundLayer);
-        if(!jumpingDown)this.game.physics.arcade.collide(this.player, this.platformLayer, null, this.processPlatformCollide, this.game);
-    },
-    initGlobalVars: function(){
-        KA.global.dialogues = this.game.cache.getJSON('dialogues');
+        if(!this.player.isJumpingDown())this.game.physics.arcade.collide(this.player, this.platformLayer, null, this.processPlatformCollide, this.game);
     },
     isWaitingForNpcs: function(){
         return this.waiting;

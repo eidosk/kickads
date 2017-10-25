@@ -14,5 +14,17 @@ ArrayUtils = {
     },
     removeItem: function(myArray, index){
         myArray.splice(index, 1);
+    },
+    hasItem: function(array, item){
+        for(i=0; i<array.length; i++){
+            if(array[i] == item)return true;
+        }
+        return false;
+    },
+    findItemIndex: function(array, item){
+        for(i=0; i<array.length; i++){
+            if(array[i] == item)return i;
+        }
+        return -1;
     }
 };

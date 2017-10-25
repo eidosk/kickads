@@ -4,16 +4,43 @@
             "Excuse me!",
             "Hello",
             "Hi!",
-            "Hey!",
-            "Ciao"
+            "Hey!"
         ],
-        "question":[
+        "questions":[
             "Where are you going?",
             "Never mind",
-            "Who do you think you are?"
+            "Who do you think you are?",
+            "What is this?",
+            "What is the meaning of life?",
+            "Why are you not smart?",
+            "What is up?",
+            "Where is now?",
+            "When is here?"
+        ],
+        "farewells":[
+            "Ok, thanks!",
+            "Thanks a lot amigo!",
+            "Wow, you helped me, thanks.",
+            "Ok, bye."
         ]
     },
-    "npcs": {
+    "npc": {
+         "replyApproach":[
+            "Yes?",
+            "What?",
+            "Can I help you?"
+        ],
+        "answers":[
+            "Nowhere",
+            "Trascend the mind",
+            "Most people don't know who they are",
+            "No Idea",
+            "Make profit",
+            "I ate too much flouride when I was a child",
+            "The sky",
+            "Here",
+            "Now"
+        ],
         "goingToWork":[
             "I am going to work",
             "Sorry, I am busy",
@@ -23,11 +50,6 @@
             "I am going home.",
             "Sorry, I am tired",
             "My family is waiting for me!"
-        ],
-        "replyApproach":[
-            "Yes?",
-            "What?",
-            "Can I help you?"
         ],
         "influenced":[
             [

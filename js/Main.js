@@ -1,20 +1,6 @@
 var KA = KA || {};
 window.onload = function(){
     KA.game = new Phaser.Game(GAME_WIDTH, GAME_HEIGHT, Phaser.CANVAS, 'game');
-    KA.global = {
-        score : 0,
-        sound : false,
-        day : 0,
-        balance : [0,0,0,0],
-        brandInfluence : [], //arr for npcs
-        awareness : [], //arr for npcs
-        balance : 300,
-        totValue : 765, //all ads:  765
-        shopX : 0, //
-        profit : 0,
-        currentSpeaker : null,
-        dialogues : null
-    }
     KA.game.state.add("Level", KA.Level);
     KA.game.state.add("WellDone", KA.WellDone);
     KA.game.state.add("GameOver", KA.GameOver);
@@ -41,7 +27,7 @@ function onKeyDown(){
         KA.game.state.start("Level");
     }
 }
-function romanize (num) {
+function romanize(num) {
     if (!+num)
         return NaN;
     var digits = String(+num).split(""),

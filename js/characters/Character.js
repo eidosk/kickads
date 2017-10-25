@@ -6,6 +6,7 @@ KA.Character = function(game, name, x, y){
     this.speechBubble = null;
     this.popUp = null; // pop up is a text message on the character (ex: press x to interact)
     this.timerEvent = null;
+    this.dialoguePartner = null;
     this.speechBubbleY = -12;
 }
 KA.Character.prototype = Object.create(Phaser.Sprite.prototype);
@@ -46,25 +47,7 @@ KA.Character.prototype.flipX = function(){
 KA.Character.prototype.isOffScreen = function(){
     return this.x < 0 || this.x > WORLD_WIDTH;
 }
-KA.Character.prototype.speak = function(msg, willDisappear){
-    if (typeof(willDisappear)==='undefined') willDisappear = false;
-    if(KA.global.currentSpeaker!=null){
-        KA.global.currentSpeaker.removeSpeechBubble();
-    }
-    KA.global.currentSpeaker = this;
-    if(this.timerEvent){
-        this.game.time.events.remove(this.timerEvent);
-        this.timerEvent = null;
-    }
-    this.removeSpeechBubble();
-    if(typeof(msg)==='string'){
-        this.speechBubble = new KA.SpeechBubble(this.game, msg, this, this.speechBubbleY);   
-    }else if(msg instanceof Array){
-        this.speechBubble = new KA.SpeechChoiceBubble(this.game, msg, this, this.speechBubbleY);
-    }
-    this.addChild(this.speechBubble);
-    if(willDisappear == true)this.timerEvent = this.game.time.events.add(3000, this.removeSpeechBubble, this); 
-}
+
 KA.Character.prototype.showPopUp = function(){
     if(!this.isSpeaking()){
         this.speak("...");
