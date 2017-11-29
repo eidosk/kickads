@@ -171,7 +171,6 @@ KA.NPC.prototype.missionComplete = function(){
         case GO_TO_SHOP:
             this.state = KA.NPC.SHOPPING;
             KA.global.profit++;
-            //trace("KA.global.profit: " + KA.global.profit);
             this.game.time.events.add(8000, this.endShopping, this);
         break;
         case GO_TO_WORK:
@@ -211,11 +210,9 @@ KA.NPC.prototype.removeBubbles = function(name){
 }
 
 KA.NPC.prototype.resumeMission = function(){
-    trace("RESUME!");
     this.stunned = false;
     this.face(this.missionX);
     this.animations.play("walk");
-    
 }
 KA.NPC.prototype.setMission = function(id){
     this.prevMissionId = this.missionId;

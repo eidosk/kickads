@@ -25,7 +25,6 @@ KA.ProgressBar.prototype.addBottomGfx = function(){
 KA.ProgressBar.prototype.updateProgress = function(progress){
     if(this.hasChild(this, this.topGfx))this.removeChild(this.topGfx);
     var tWidth = this.barWidth * progress;
-    //trace("this.game: " + this.game);
     this.topGfx = new Phaser.Graphics(this.game, 1, 1);
     this.topGfx.beginFill(this.color);
     this.topGfx.lineTo(tWidth, 0);

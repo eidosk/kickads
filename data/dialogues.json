@@ -8,18 +8,12 @@
         ],
         "questions":[
             "Where are you going?",
-            "Never mind",
-            "Who do you think you are?",
-            "What is this?",
-            "What is the meaning of life?",
-            "Why are you not smart?",
-            "What is up?",
-            "Where is now?",
-            "When is here?"
+            "I hate ads!",
+            "There are too many ads!"
         ],
         "farewells":[
             "Ok, thanks!",
-            "Thanks a lot amigo!",
+            "Thanks a lot!",
             "Wow, you helped me, thanks.",
             "Ok, bye."
         ]
@@ -31,15 +25,9 @@
             "Can I help you?"
         ],
         "answers":[
-            "Nowhere",
-            "Trascend the mind",
-            "Most people don't know who they are",
-            "No Idea",
-            "Make profit",
-            "I ate too much flouride when I was a child",
-            "The sky",
-            "Here",
-            "Now"
+            "I am going to work",
+            "Why?",
+            "I don't really care"
         ],
         "goingToWork":[
             "I am going to work",

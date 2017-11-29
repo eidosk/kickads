@@ -82,6 +82,7 @@ KA.Level = {
         KA.EnemyManager.init(this.enemiesTilemap, this.game.cache.getJSON('adsInfo'));
         this.platformTilemap = this.game.add.tilemap("platformTilemap"); 
         this.platformTilemap.addTilesetImage('platformTile', 'platformTile');
+        this.findHiddenPlatformTiles();
         this.platformLayer = this.platformTilemap.createLayer('platformLayer');
         this.platformLayer.resizeWorld();
         this.platformTilemap.setCollision(1);
@@ -101,23 +102,18 @@ KA.Level = {
         KA.global.initVars(); 
         this.dayPart = 0;
         this.nextDayPart();
-        //this.endDay();
-        this.findHiddenPlatformTiles();
-        this.platformLayer.kill();
-        this.platformLayer.destroy();
-        this.platformLayer = null;
-        this.platformTilemap.replace(1, 0, 3, 27, 2, 1);
-        this.platformLayer = this.platformTilemap.createLayer('platformLayer');
-        this.platformLayer.alpha = HIT_AREA_ALPHA;
-        //this.platformTilemap.currentLayer = this.platformLayer;
         this.platformTilemap.setCollision(1, true, this.platformLayer, true);
-        /*
+        Signals.enemyDestroyed.add(this.onEnemyDestroyed, this);
+    },
+    onEnemyDestroyed: function(value, enemy){ //optimize
+        this.platformTilemap.destroy();
+        this.platformLayer.destroy();
+        this.platformTilemap = this.game.add.tilemap("platformTilemap");
+        this.platformTilemap.addTilesetImage('platformTile', 'platformTile');
+        this.findHiddenPlatformTiles();//optimize
         this.platformLayer = this.platformTilemap.createLayer('platformLayer');
-        this.platformLayer.resizeWorld();
         this.platformLayer.alpha = HIT_AREA_ALPHA;
-        this.game.physics.enable(this.platformLayer, Phaser.Physics.ARCADE);
-        */
-        //replace(source, dest, x, y, width, height [, layer])
+        this.platformTilemap.setCollision(1);
     },
     update: function(){
         this.bgFar.x= this.game.camera.x*0.03;
@@ -137,10 +133,8 @@ KA.Level = {
             KA.NPCManager.everybodyGoHomeAfterWork();
         }
         if(this.dayPart == 1 && !KA.NPCManager.isEverybodyWorking()){
-            ////trace("Wait...");
             this.waiting = true;
         }else if(this.dayPart == 5 && !KA.NPCManager.isEverybodyHome()){
-            ////trace("Wait...");
             this.waiting = true;
         }else if(this.dayPart>= TOT_DAY_PARTS-1){
             this.endDay();
@@ -155,7 +149,6 @@ KA.Level = {
         this.game.state.start("EndOfTheDay");
     },
     enemyPlatformOverlapCallback: function(spriteThatCollided, tileThatCollided){
-        trace("processEnemyPlatformOverlap: " + tileThatCollided.x);
         return true;
     },
     findHiddenPlatformTiles: function(){
@@ -163,12 +156,12 @@ KA.Level = {
         for(i=0; i< enemies.length; i++){
             for(j=0; j< enemies[i].length; j++){
                 var enemy = enemies[i][j];
-                if(enemy.parent){
-                    temp = enemy;
-                    return;
-                }
+                if(enemy.shown)this.platformTilemap.swap(1, 0, enemy.x/TILE_WIDTH, enemy.y/TILE_WIDTH+1, enemy.width / TILE_WIDTH, enemy.height / TILE_WIDTH-1);
             }
         }
+    },
+    hideTile: function(tile){
+        this.platformTilemap.replace(1, 0, tile.x, tile.y, 1, 1);
     },
     gameOver: function(){
         this.game.state.start("GameOver");
@@ -184,7 +177,6 @@ KA.Level = {
         return this.waiting;
     },
     nextDayPart: function(){
-        //trace("next day part!!!");
         this.dayPart++;
         if(this.dayPart==1){
             KA.NPCManager.init(this.game, this.game.cache.getJSON('objectsInfo')); //show npcs

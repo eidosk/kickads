@@ -18,10 +18,8 @@ KA.EnemyManager = {
         this.totAdsArr = [0,0,0];
         this.resultAdsArr = [0,0,0];
         this.totValue = 0;
-        //////trace("There are " + this.totAdTypes + " types of ads");
         this.enemies = new Array(this.totAdTypes); //will be a 2d array
         this.replaceTiles();
-        //////trace("tot enemies: " + this.countEnemies());
         this.showEnemies();
         //this.removeAllEnemiesExceptShown();
     },
@@ -55,7 +53,6 @@ KA.EnemyManager = {
         return this.enemies;
     },
     getEnemyFirstTileArray: function(id){
-        //////trace("id: " + id);
         //EnemyManager
         tArray = [];
         var i = 0;
@@ -96,7 +93,6 @@ KA.EnemyManager = {
             var tSet = this.info.tilesets[i];
             var firstTileArr = this.getEnemyFirstTileArray(tSet.firstgid);
             var count = firstTileArr.length;
-            ////trace("Ad " + i + " is called " + tSet.name + ", it has ID: " + tSet.firstgid + " and there are " + count + " ads of this type on screen");
             this.totAdsArr[i] = count;
             this.tilemap.addTilesetImage(tSet.name, tSet.name);
             this.enemies[i] = new Array(count);

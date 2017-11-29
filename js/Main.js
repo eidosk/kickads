@@ -7,10 +7,6 @@ window.onload = function(){
     KA.game.state.add("EndOfTheDay", KA.EndOfTheDay);
     KA.game.state.start(START_STATE);
 }
-//GLOBAL FUNCTIONS
-function trace(message){
-    console.log(message);
-}
 function round(value){
     return Phaser.Math.roundAwayFromZero(value);
 }

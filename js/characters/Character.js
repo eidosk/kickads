@@ -13,12 +13,10 @@ KA.Character.prototype = Object.create(Phaser.Sprite.prototype);
 KA.Character.prototype.constructor = KA.Character;
 /*FUNCTIONS*/
 KA.Character.prototype.playAnim = function(name){
-    //////trace("!!!playAnim!!!");
     this.state = name;
     if(this.animations)this.animations.play(name);
 }
 KA.Character.prototype.update = function(){
-    ////////trace("update! ");
 }
 KA.Character.prototype.setAnchor = function(){
     this.anchor.setTo(0.5, 0);

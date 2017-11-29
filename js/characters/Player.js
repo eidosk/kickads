@@ -29,9 +29,7 @@ KA.Player.prototype = Object.create(KA.Character.prototype);
 KA.Player.prototype.constructor = KA.Player;
 /*FUNCTIONS*/
 KA.Player.prototype.act = function(){
-    //trace("ACT")
     if(this.canAct()){
-        //trace("doAction.dispatch");
         Signals.doAction.dispatch(this);
         this.acting = true;
     }
@@ -117,7 +115,6 @@ KA.Player.prototype.kick = function(){
     this.body.velocity.x = ATTACK_SPEED * this.scale.x;
 }
 KA.Player.prototype.onRunAnimComplete = function(){
-    //////////trace("AIR!");
     this.needsAir = true;
     this.runCounter = 0;
     this.playAnim(RUN_BREATHE);
@@ -125,7 +122,8 @@ KA.Player.prototype.onRunAnimComplete = function(){
     //this.needsAir = true;
 }
 KA.Player.prototype.onKickAnimComplete = function(){
-    if(this.state==JUMP)playAnim(JUMP);
+    console.log("this.state: " + this.state);
+    if(this.state==KICK_AIR)this.playAnim(JUMP);
     else this.playAnim(STAND);
 }
 KA.Player.prototype.onSplatAnimComplete = function(){
@@ -148,7 +146,6 @@ KA.Player.prototype.splat = function(){
     this.playAnim(SPLAT);
     splatAnim.onComplete.add(this.onSplatAnimComplete, this);
 }
-
 KA.Player.prototype.update = function(){
     if(this.state==SPLAT || this.state==LAND_HARD)return; //must wait for end of land hard or splate animations
     if(this.jumpingDown){
@@ -213,7 +210,7 @@ KA.Player.prototype.update = function(){
             this.splat();
         }
         if(infoButton.isDown){
-            ////trace("x: " + this.x);
+            
         }
     }else{
         if(this.isRunning()){

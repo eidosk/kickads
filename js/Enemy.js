@@ -5,8 +5,8 @@ KA.Enemy = function(game, x, y, name){
     this.x = x;
     this.y = y;
     this.name = name;
+    this.shown = false;
     this.value = (this.width / TILE_WIDTH) * (this.height/TILE_WIDTH);
-    //trace("this.value: " + this.value);
 }
 KA.Enemy.prototype = Object.create(Phaser.Sprite.prototype);
 KA.Enemy.prototype.constructor = KA.Enemy;
@@ -14,15 +14,11 @@ KA.Enemy.prototype.constructor = KA.Enemy;
 KA.Enemy.KICK_DAMAGE = 3.5;
 /* FUNCTIONS */
 KA.Enemy.prototype.init = function(){
-    //this.shown = true;
-    //this.game.physics.enable(this, Phaser.Physics.ARCADE);
-    
+    this.shown = true;
     this.shake = new Phaser.Plugin.Shake(this.game);
     this.game.plugins.add(this.shake);
-    
     this.game.add.existing(this);
     this.frame = 0;
-    //this.shown = false;
     this.totFrames = this.animations.frameTotal / 4;
     this.health = (this.width / TILE_WIDTH) * (this.height / TILE_WIDTH);
     this.destruction = 0;
@@ -52,13 +48,11 @@ KA.Enemy.prototype.onKick = function(){
         }
         
         /* Use it like: */
-        trace("SHAEK");
         this.shake.shake(2.5, this);
         
     }
 }
 KA.Enemy.prototype.emitParticles = function(cx, cy){
-    //trace("EMIT PARTICLES: " + this.game + ", name: " + this.id);
     //if(this.particleEmitter!=null)this.destroyParticleEmitter();
     var particleEmitter = this.game.add.emitter(cx, cy, 10);
     particleEmitter.alpha = .75;
@@ -72,8 +66,9 @@ KA.Enemy.prototype.destroyParticleEmitter = function(particleEmitter){
     particleEmitter.destroy();
 }
 KA.Enemy.prototype.doDestroy = function(){
+    this.shown = false;
     this.removeKickSignal();
-    Signals.enemyDestroyed.dispatch(this.value);
+    Signals.enemyDestroyed.dispatch(this.value, this);
     this.emitter.doDestroy();
     this.destroy();
 }

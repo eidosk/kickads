@@ -30,9 +30,7 @@ KA.GUI.prototype.addProgressBar = function(){
     this.addChild(this.adText2);
 }
 KA.GUI.prototype.onEnemyDestroyed = function(value){
-    //trace("destroyed: " + value);
     this.balance -= value;
-    //trace("balance now: " + this.balance);
     var progress = this.balance / this.totValue;
     this.progressBar.updateProgress(progress);
 }
@@ -48,10 +46,8 @@ KA.GUI.prototype.fadeOutDayText = function(){
     tween.onComplete.add(this.removeDayText, this);
 }
 KA.GUI.prototype.removeDayText = function(){
-    ////trace("remove!" + this);
     this.removeChild(this.dayText);
 }
 KA.GUI.prototype.destroy = function(){
-    //trace("on Destroy!");
     Signals.enemyDestroyed.remove(this.onEnemyDestroyed, this);
 }

@@ -30,7 +30,6 @@ KA.Dialogue = {
     },
     thinkQuestion: function(){
         this.state = this.THINK_QUESTION;
-        trace("THink Question");
         this.player.thinkLines(KA.global.dialogues.player.questions);
     },
     askQuestion: function(txt, idx){
@@ -62,7 +61,6 @@ KA.Dialogue = {
 
 //LISTEN
 KA.Player.prototype.listen = function(msg){
-    trace("LISTEN, " + KA.Dialogue.state);
     var npcDialogues = KA.global.dialogues.npc;
     if(KA.Dialogue.state == KA.Dialogue.REPLY_APPROACH){
         this.game.time.events.add(KA.Dialogue.DEFAULT_LINE_DURATION, KA.Dialogue.thinkQuestion, KA.Dialogue);   
@@ -80,7 +78,7 @@ KA.Player.prototype.thinkLines = function(lines){
 }
 
 
-KA.BusinessMan.prototype.listen = function(msg){
+KA.NPC.prototype.listen = function(msg){
     if(KA.Dialogue.state == KA.Dialogue.ASK_QUESTION){
         this.game.time.events.add(KA.Dialogue.DEFAULT_LINE_DURATION, KA.Dialogue.answerQuestion, KA.Dialogue);  
     }
@@ -127,9 +125,3 @@ KA.Character.prototype.speak = function(msg, last){
     //if(last)this.timerEvent = this.game.time.events.add(3000, this.removeSpeechBubble, this);
     if(last)this.timerEvent = this.game.time.events.add(KA.Dialogue.DEFAULT_LINE_DURATION, KA.Dialogue.end, KA.Dialogue);
 }
-
-
-
-
-
-
