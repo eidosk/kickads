@@ -65,9 +65,11 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":59.8783333333334,
-                 "y":323.575666666667
+                 "x":82.3783000000001,
+                 "y":328.742666666667
                 }],
+         "offsetx":0,
+         "offsety":0.5,
          "opacity":1,
          "type":"objectgroup",
          "visible":true,

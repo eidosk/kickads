@@ -2,55 +2,34 @@ var KA = KA || {};
 KA.SpeechBubble = function(game, msg, character, y){ //optimize
     Phaser.Group.call(this, game);
     game.add.existing(this);
-    this.textHeight = 6;
+    this.y = y;
+    this.character = character;
     this.makeSprites();
-    this.createBitmapText(msg);
-    this.positionSprites();
     this.flipSprites();
-    //add to stage
+    this.addSprites();
+    this.setUp(msg);
+    if(this.character.scale.x == -1)this.flipText();
+}
+KA.SpeechBubble.prototype = Object.create(Phaser.Group.prototype);
+KA.SpeechBubble.prototype.constructor = KA.SpeechBubble;
+KA.SpeechBubble.TEXT_HEIGHT = 6;
+KA.SpeechBubble.BODY_HEIGHT = 12;
+/*FUNCTIONS*/
+KA.SpeechBubble.prototype.addSprites = function(){
+    console.log("ADD SPRITES");
     this.add(this.topLeftCorner);
     this.add(this.bodyCenter);
     this.add(this.topRightCorner);
     this.add(this.bottomLeftCorner);
     this.add(this.bottomRightCorner);
-    
-    //set size
-    this.bodyCenter.width = this.bitmapText.width;
-    this.bodyCenter.height = this.height;
-
-    if(this.height > this.topLeftCorner.height*2){
-        var bodyLeft = game.make.sprite(0, this.topLeftCorner.height,'speech_body');
-        var bodyRight = game.make.sprite(this.width - this.topLeftCorner.width, this.topLeftCorner.height,'speech_body');
-        bodyLeft.width = bodyRight.width = this.topLeftCorner.width;
-        bodyLeft.height = bodyRight.height = this.height - this.topLeftCorner.height*2;
-        this.add(bodyLeft);
-        this.add(bodyRight);
-    }
-    this.y = y;
-    this.add(this.bitmapText);
-    
-    this.speechBlackArrow.x = Math.floor(this.width * .5) - 2;
-    this.speechBlackArrow.y = this.height;
     this.add(this.speechBlackArrow);
-    this.center();
-    if(character.scale.x == -1)this.flipText();
-    /*
-        var origParseFloat = parseFloat;
-        parseFloat = function(str) {
-        alert("And I'm in your floats!");
-        return origParseFloat(str);
-     }
-     */
 }
-KA.SpeechBubble.prototype = Object.create(Phaser.Group.prototype);
-KA.SpeechBubble.prototype.constructor = KA.SpeechBubble;
-/*FUNCTIONS*/
 KA.SpeechBubble.prototype.addBitmapText = function(txt){
     this.createBitmapText(txt);
     this.add(this.bitmapText);
 }
 KA.SpeechBubble.prototype.center = function(){
-    this.x = - Math.floor(this.width *.5);
+    this.x = -Math.floor(this.width *.5);
 }
 KA.SpeechBubble.prototype.createBitmapText = function(txt){
      if(this.bitmapText!=null){
@@ -82,7 +61,31 @@ KA.SpeechBubble.prototype.makeSprites = function(){
 KA.SpeechBubble.prototype.positionSprites = function(){
     this.bodyCenter.x = this.topLeftCorner.width;
     this.topRightCorner.x = this.topLeftCorner.width*2 + this.bitmapText.width;
-    this.bottomLeftCorner.y = this.textHeight*2;
+    this.bottomLeftCorner.y = KA.SpeechBubble.TEXT_HEIGHT*2;
     this.bottomRightCorner.x = this.topLeftCorner.width*2 + this.bitmapText.width;
-    this.bottomRightCorner.y = this.textHeight*2;
+    this.bottomRightCorner.y = KA.SpeechBubble.TEXT_HEIGHT*2;
+    this.speechBlackArrow.x = (this.bodyCenter.width + this.topLeftCorner.width*2) * .5 - this.speechBlackArrow.width*.5;
+    this.speechBlackArrow.y = KA.SpeechBubble.BODY_HEIGHT;
+}
+KA.SpeechBubble.prototype.resize = function(){
+    this.bodyCenter.width = this.bitmapText.width;
+    this.bodyCenter.height = KA.SpeechBubble.BODY_HEIGHT;
+}
+KA.SpeechBubble.prototype.setUp = function(msg){
+    this.createBitmapText(msg);
+    this.resize();
+    this.positionSprites();
+    
+    //var game = KA.game;
+    /*if(this.height > this.topLeftCorner.height*2){
+        var bodyLeft = game.make.sprite(0, this.topLeftCorner.height,'speech_body');
+        var bodyRight = game.make.sprite(this.width - this.topLeftCorner.width, this.topLeftCorner.height,'speech_body');
+        bodyLeft.width = bodyRight.width = this.topLeftCorner.width;
+        bodyLeft.height = bodyRight.height = this.height - this.topLeftCorner.height*2;
+        this.add(bodyLeft);
+        this.add(bodyRight);
+    }*/
+    this.add(this.bitmapText);
+    console.log(">>this.width:  " + this.width );
+    this.center();
 }
