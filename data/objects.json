@@ -65,8 +65,8 @@
                  "type":"",
                  "visible":true,
                  "width":12,
-                 "x":82.3783000000001,
-                 "y":328.742666666667
+                 "x":82.3783,
+                 "y":328.743
                 }],
          "offsetx":0,
          "offsety":0.5,
@@ -99,5 +99,5 @@
  "tilewidth":12,
  "type":"map",
  "version":1,
- "width":107
+ "width":106
 }
