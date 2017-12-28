@@ -1,0 +1,72 @@
+[
+	{
+		"title": "Approach",
+		"tags": "",
+		"body": "Hello!\n[[Reply]]",
+		"position": {
+			"x": -255,
+			"y": 198
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Reply",
+		"tags": "",
+		"body": "Yes?\n[[Q1]]\n[[Q2]]",
+		"position": {
+			"x": 206,
+			"y": 197
+		},
+		"colorID": 6
+	},
+	{
+		"title": "Q1",
+		"tags": "",
+		"body": "How are you?\n[[A1]]",
+		"position": {
+			"x": 638,
+			"y": -32
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Q2",
+		"tags": "",
+		"body": "Who are you?\n[[A2]]",
+		"position": {
+			"x": 635,
+			"y": 463
+		},
+		"colorID": 0
+	},
+	{
+		"title": "A2",
+		"tags": "",
+		"body": "None of your business!\n[[Bye]]",
+		"position": {
+			"x": 1058,
+			"y": 459
+		},
+		"colorID": 6
+	},
+	{
+		"title": "A1",
+		"tags": "",
+		"body": "Fine, thanks!\n[[Bye]]",
+		"position": {
+			"x": 1045,
+			"y": -29
+		},
+		"colorID": 6
+	},
+	{
+		"title": "Bye",
+		"tags": "",
+		"body": "Ok, bye!",
+		"position": {
+			"x": 1571,
+			"y": 188
+		},
+		"colorID": 0
+	}
+]

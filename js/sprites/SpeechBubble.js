@@ -75,17 +75,6 @@ KA.SpeechBubble.prototype.setUp = function(msg){
     this.createBitmapText(msg);
     this.resize();
     this.positionSprites();
-    
-    //var game = KA.game;
-    /*if(this.height > this.topLeftCorner.height*2){
-        var bodyLeft = game.make.sprite(0, this.topLeftCorner.height,'speech_body');
-        var bodyRight = game.make.sprite(this.width - this.topLeftCorner.width, this.topLeftCorner.height,'speech_body');
-        bodyLeft.width = bodyRight.width = this.topLeftCorner.width;
-        bodyLeft.height = bodyRight.height = this.height - this.topLeftCorner.height*2;
-        this.add(bodyLeft);
-        this.add(bodyRight);
-    }*/
     this.add(this.bitmapText);
-    console.log(">>this.width:  " + this.width );
     this.center();
 }

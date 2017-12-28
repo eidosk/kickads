@@ -1,0 +1,182 @@
+[
+	{
+		"title": "Approach",
+		"tags": "",
+		"body": "Hello\nHi\nExcuse me!\n[[Reply]]\n",
+		"position": {
+			"x": -2742,
+			"y": 1317
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Reply",
+		"tags": "",
+		"body": "Can I help you?\nYes?\n[[Q1]]\n[[Q2]]\n[[Q3]]",
+		"position": {
+			"x": -2298,
+			"y": 1319
+		},
+		"colorID": 2
+	},
+	{
+		"title": "Q1",
+		"tags": "",
+		"body": "Who are you?\n[[Who]]",
+		"position": {
+			"x": -1689,
+			"y": 1077
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Q2",
+		"tags": "",
+		"body": "Where are we?\n[[Where]]\n<<test()>>",
+		"position": {
+			"x": -1690,
+			"y": 1279
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Who",
+		"tags": "",
+		"body": "I am Jill.\n[[Bye]]",
+		"position": {
+			"x": -1260,
+			"y": 1064
+		},
+		"colorID": 2
+	},
+	{
+		"title": "Where",
+		"tags": "",
+		"body": "We are in the city\n[[Bye]]",
+		"position": {
+			"x": -1263,
+			"y": 1272
+		},
+		"colorID": 2
+	},
+	{
+		"title": "Bye",
+		"tags": "",
+		"body": "Ok, thanks. Bye!",
+		"position": {
+			"x": -760,
+			"y": 1166
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Q3",
+		"tags": "",
+		"body": "Nevermind. Bye",
+		"position": {
+			"x": -1687,
+			"y": 1487
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Player",
+		"tags": "",
+		"body": "",
+		"position": {
+			"x": -3473,
+			"y": 174
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Business Woman",
+		"tags": "",
+		"body": "",
+		"position": {
+			"x": -3265,
+			"y": 174
+		},
+		"colorID": 2
+	},
+	{
+		"title": "i2",
+		"tags": "",
+		"body": "I am getting thirsty\nI might get a drink...",
+		"position": {
+			"x": -2421,
+			"y": 64
+		},
+		"colorID": 2
+	},
+	{
+		"title": "i3",
+		"tags": "ciao hello",
+		"body": "I am thirsty!\nI need a Coca-Colon.",
+		"position": {
+			"x": -2312,
+			"y": 365
+		},
+		"colorID": 2
+	},
+	{
+		"title": "i4",
+		"tags": "",
+		"body": "Where can I get a Coca-Colon around here?\nGive me a Coca-Colon!",
+		"position": {
+			"x": -2252,
+			"y": 675
+		},
+		"colorID": 2
+	},
+	{
+		"title": "i5",
+		"tags": "",
+		"body": "Aghhh!\nGet...out...of...my...way",
+		"position": {
+			"x": -2322,
+			"y": 975
+		},
+		"colorID": 2
+	},
+	{
+		"title": "Start",
+		"tags": "",
+		"body": "Checks if NPC is aware\n\n[[CheckInfluence]]\n[[Approach]]\n",
+		"position": {
+			"x": -3618,
+			"y": 890
+		},
+		"colorID": 4
+	},
+	{
+		"title": "Logic",
+		"tags": "",
+		"body": "",
+		"position": {
+			"x": -3681,
+			"y": 174
+		},
+		"colorID": 4
+	},
+	{
+		"title": "CheckInfluence",
+		"tags": "",
+		"body": "Npc is not aware. Check influence level\n\n[[i0]]\n[[i1]]\n[[i2]]\n[[i3]]\n[[i4]]\n[[i5]]\n",
+		"position": {
+			"x": -3235,
+			"y": 593
+		},
+		"colorID": 4
+	},
+	{
+		"title": "i1",
+		"tags": "",
+		"body": "I am busy!\nSorry, I am busy.\nPlease leave me alone.\nMind your own business!\nI am busy with my business.\nI have no time for unprofitable chatting.",
+		"position": {
+			"x": -2759,
+			"y": -4
+		},
+		"colorID": 2
+	}
+]

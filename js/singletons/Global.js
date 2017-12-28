@@ -9,14 +9,7 @@
         totValue : 765, //all ads:  765
         shopX : 0, //
         profit : 0,
-        currentSpeaker : null,
         dialogues : null,
-        assignCurrentSpeaker: function(speaker){
-             if(this.currentSpeaker!=null){
-                this.currentSpeaker.removeSpeechBubble();
-            }
-            this.currentSpeaker = speaker;
-        },
         initVars: function(){
             this.dialogues = KA.game.cache.getJSON('dialogues');
         }

@@ -1,9 +1,9 @@
 var KA = KA || {};
 /*CONSTRUCTOR*/
 KA.NPC = function(game, name, x, fx, mission){
-    //if (typeof(direction)==='undefined') direction = 1;
     this.name = name;
-    
+    this.dialogues = game.cache.getJSON(name);
+    //console.log("dialogue set to: " + this.dialogues);
     KA.Character.call(this, game, name, x, 0);
     this.startX = x;
     this.zombie = false, this.stunned = false, this.immune = false, this.distancing = false;
@@ -28,7 +28,6 @@ KA.NPC = function(game, name, x, fx, mission){
     this.bubbles.animations.add('bubble_mid', [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 29, 29], 8, true);
     this.bubbles.animations.add('bubble_high', [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46], 8, true);
     this.body = this.addChild(this.createBody());
-    this.dialogues = KA.global.dialogues.npc;
     Signals.doAction.add(this.onAction, this);
 };
 KA.NPC.prototype = Object.create(KA.Character.prototype); 
@@ -75,31 +74,20 @@ KA.NPC.prototype.doRemove = function(){
     this.destroy();
 }
 KA.NPC.prototype.endShopping = function(){
+    console.log("END SHOPPING!");
     this.setMission(this.prevMissionId);
     this.brandInfluence = [0,0,0,0];
     this.updateInfluenceBar();
     this.immune = true; //until end of the day
     this.animations.play("walk");
     this.reappear();
-}
-KA.NPC.prototype.getDialoguesArray = function(){
-    var arr = [];
-    var brand = 0; //temp
-    var influence = this.brandInfluence[brand]; //temp, only one brand
-    if(influence<25){
-        if(this.missionId==GO_TO_WORK) arr = this.dialogues.goingToWork;
-        else arr = this.dialogues.goingHome;
-    }else if (influence>=25 && influence<50){
-        arr = this.dialogues.influenced[brand][0];
-    }else if (influence>=50 && influence<75){
-        arr = this.dialogues.influenced[brand][1];
-    }else if (influence>=75 && influence<100){
-        arr = this.dialogues.influenced[brand][2];
-    }else if (influence>=100){
-        arr = this.dialogues.influenced[brand][3];
-    }
-    return arr;
-}
+},
+KA.NPC.prototype.getApproached = function(){
+    this.distancing = true;
+    this.immune = true;
+    this.awarenessBar.visible = this.influenceBar.visible = false;
+},
+
 KA.NPC.prototype.getHitDamage = function(brandId){
     if(this.awareness<25){
        return HIT_DAMAGE[0];
@@ -111,14 +99,33 @@ KA.NPC.prototype.getHitDamage = function(brandId){
         return HIT_DAMAGE[3];
     }
 }//get hit damage depending on awareness
+/*
 KA.NPC.prototype.getRandomSentence = function(){
     var arr = this.getDialoguesArray();
     return arr[Math.floor(Math.random()*arr.length)];
 }
+*/
 KA.NPC.prototype.goHomeAfterWork = function(){
     this.setMission(GO_HOME);
     this.reappear();
 }
+KA.NPC.prototype.getInfluenceLevel = function(brandId){
+    
+    if(this.brandInfluence[brandId]==0){
+        return 1;
+    }else if(this.brandInfluence[brandId]>0 && this.brandInfluence[brandId]<25){
+        return 1;
+    }else if(this.brandInfluence[brandId]>=25 && this.brandInfluence[brandId]<50){
+        return 2;
+    }else if(this.brandInfluence[brandId]>=50 && this.brandInfluence[brandId]<75){
+        return 3;
+    }else if(this.brandInfluence[brandId]>=75 && this.brandInfluence[brandId]<100){
+        return 4;
+    }else if(this.brandInfluence[brandId]>=100){
+        return 5;
+    }
+}
+
 KA.NPC.prototype.increaseAwareness = function(){
     this.awareness += 5;
     if(this.awareness>=100){
@@ -129,23 +136,33 @@ KA.NPC.prototype.increaseAwareness = function(){
 KA.NPC.prototype.influence = function(brandId){
     this.brandInfluence[brandId] += this.getHitDamage();
     this.loseAwareness();
-    
-    if(this.brandInfluence[brandId]<25){
-        
-    }else if(this.brandInfluence[brandId]>=25 && this.brandInfluence[brandId]<50){
-        this.showBubbles("bubble_low");
-    }else if(this.brandInfluence[brandId]>=50 && this.brandInfluence[brandId]<75){
-        this.showBubbles("bubble_mid");
-    }else if(this.brandInfluence[brandId]>=75 && this.brandInfluence[brandId]<100){
-        this.showBubbles("bubble_high");
-    }else if(this.brandInfluence[brandId]>=100){
-        this.removeBubbles();
-        this.zombify(brandId);
-        this.setMission(GO_TO_SHOP);
+    var influenceLevel = this.getInfluenceLevel(brandId);
+    switch(influenceLevel){
+        case 0:
+        break;
+        case 1: //0-24%
+        break;
+        case 2: //25-49%
+            this.showBubbles("bubble_low");
+        break;
+        case 3: //50-74%
+            this.showBubbles("bubble_mid");
+        break;
+        case 4: //75-99%
+            this.showBubbles("bubble_high");
+        break;
+        case 5: //100%
+            this.removeBubbles();
+            this.zombify(brandId);
+            this.setMission(GO_TO_SHOP);
+        break;
     }
     this.updateInfluenceBar();
     this.updateAwarenessBar();
     this.stun();
+}
+KA.NPC.prototype.isAware = function(){
+    return this.awareness >=100;
 }
 KA.NPC.prototype.isAtHome = function(){
     return this.state == KA.NPC.AT_HOME;
@@ -166,9 +183,17 @@ KA.NPC.prototype.loseAwareness = function(){
     this.awareness-- ;
     if(this.awareness<=0)this.awareness=0;
 }
+
+
+/*
+var GO_TO_WORK = 0;
+var GO_TO_SHOP = 1;
+var GO_HOME = 2;
+*/
 KA.NPC.prototype.missionComplete = function(){
     switch(this.missionId){
         case GO_TO_SHOP:
+            console.log("GO_TO_SHOP!");
             this.state = KA.NPC.SHOPPING;
             KA.global.profit++;
             this.game.time.events.add(8000, this.endShopping, this);
@@ -199,8 +224,7 @@ KA.NPC.prototype.reappear = function(){
     //this.removePopUp();
 }
 KA.NPC.prototype.recoverFromStun = function(){
-    if(this.isZombie())this.animations.play("walk_zombie");
-    else this.animations.play("walk");
+    this.resumeWalking();
     this.stunned = false;
     if(this.areThereBubbles())this.bubbles.alpha = 1;
     if(this.areThereThoughtBubbles())this.removeChild(this.thoughtBubble);
@@ -212,10 +236,18 @@ KA.NPC.prototype.removeBubbles = function(name){
 KA.NPC.prototype.resumeMission = function(){
     this.stunned = false;
     this.face(this.missionX);
-    this.animations.play("walk");
+    this.resumeWalking();
 }
+
+KA.NPC.prototype.resumeWalking = function(){
+    if(this.isZombie())this.animations.play("walk_zombie");
+    else this.animations.play("walk");
+}
+
 KA.NPC.prototype.setMission = function(id){
+    console.log("set mission: " + id);
     this.prevMissionId = this.missionId;
+    console.log("prev mission set to : " + this.prevMissionId);
     this.missionId = id;
     switch(id){
         case GO_TO_SHOP:

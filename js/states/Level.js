@@ -16,6 +16,8 @@ KA.Level = {
         this.game.load.json('adsInfo', 'data/enemies.json');
         this.game.load.json('objectsInfo', 'data/objects.json');
         this.game.load.json('dialogues', 'data/dialogues.json');
+        this.game.load.json("businessMan", 'data/dialogues/businessMan.json');
+        this.game.load.json("businessWoman", 'data/dialogues/businessWoman.json');
         //TILES
         this.game.load.image('groundTile', 'images/tiles/ground.png');
         this.game.load.image('platformTile', 'images/tiles/platform.png');
@@ -30,8 +32,8 @@ KA.Level = {
         this.game.load.spritesheet('dude', 'images/hero_sprites.png', 22, 22, 90);
         //this.game.load.image('girl', 'images/npcs/girl.png');
         //this.game.load.image('old_man', 'images/npcs/old_man.png');
-        this.game.load.spritesheet('business_man', 'images/npcs/business_man.png', 22, 30, 20);
-        this.game.load.spritesheet('business_woman', 'images/npcs/business_woman.png', 22, 30, 20);
+        this.game.load.spritesheet('businessMan', 'images/npcs/business_man.png', 22, 30, 20);
+        this.game.load.spritesheet('businessWoman', 'images/npcs/business_woman.png', 22, 30, 20);
         //this.game.load.image('cool_guy', 'images/npcs/cool_guy.png');
         //this.game.load.spritesheet('npcs', 'images/npcs.png', 22, 30, 32);
         //BG
@@ -104,6 +106,7 @@ KA.Level = {
         this.nextDayPart();
         this.platformTilemap.setCollision(1, true, this.platformLayer, true);
         Signals.enemyDestroyed.add(this.onEnemyDestroyed, this);
+        this.game.input.keyboard.onDownCallback = null;
     },
     onEnemyDestroyed: function(value, enemy){ //optimize
         this.platformTilemap.destroy();

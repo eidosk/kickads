@@ -45,7 +45,6 @@ KA.Character.prototype.flipX = function(){
 KA.Character.prototype.isOffScreen = function(){
     return this.x < 0 || this.x > WORLD_WIDTH;
 }
-
 KA.Character.prototype.showPopUp = function(){
     if(!this.isSpeaking()){
         this.speak("...");
@@ -73,4 +72,10 @@ KA.Character.prototype.removeSpeechBubble = function(){
         this.removeChild(this.speechBubble);
         this.speechBubble = null;
     }
+}
+KA.Character.prototype.speak = function(msg, last){
+    if (typeof(last)==='undefined') last = false;
+    this.removeSpeechBubble();
+    this.speechBubble = new KA.SpeechBubble(this.game, msg, this, this.speechBubbleY);
+    this.addChild(this.speechBubble);
 }

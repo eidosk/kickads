@@ -1,6 +1,7 @@
 var KA = KA || {};
 //GAMEPLAY
-var HIT_DAMAGE = [10,8,6,4];
+//var HIT_DAMAGE = [10,8,6,4];
+var HIT_DAMAGE = [100,100,100,100];
 //ALPHA
 var HIT_AREA_ALPHA = 0;
 var BULLET_ALPHA = 1;
