@@ -1,0 +1,24 @@
+{
+  "name": "kickads-game-utils",
+  "version": "1.0.0",
+  "description": "Reusable utilities for speech bubbles and dialogue systems in game development",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "game",
+    "dialogue",
+    "speech-bubble",
+    "typescript",
+    "game-utils"
+  ],
+  "author": "KickAds Team",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
